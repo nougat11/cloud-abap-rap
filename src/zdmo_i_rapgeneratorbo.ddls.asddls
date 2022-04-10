@@ -1,7 +1,7 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CDS View forRAPGeneratorBO'
 define root view entity ZDMO_I_RAPGENERATORBO
-provider contract transactional_interface
+//provider contract transactional_interface
   as projection on ZDMO_R_RAPGENERATORBO  
 {
   key RapNodeUUID,
