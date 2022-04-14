@@ -160,11 +160,11 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
           "when moving from namespace slashDMOslash to zetDMOunderscore
           DATA(filter_2) = xco_cp_system=>software_component->get_filter( xco_cp_abap_sql=>constraint->equal( '/' && 'DMO' && '/' && 'SAP' ) ) .
 
-          IF software_component = 'ZLOCAL'.
-            software_component_filter = xco_cp_abap_repository=>filter->union( it_filters = VALUE #( ( filter_1 ) ( filter_2 ) ) ).
-          ELSE.
+*          IF software_component = 'ZLOCAL'.
+*            software_component_filter = xco_cp_abap_repository=>filter->union( it_filters = VALUE #( ( filter_1 ) ( filter_2 ) ) ).
+*          ELSE.
             software_component_filter = filter_1.
-          ENDIF.
+*          ENDIF.
 
 
         ENDIF.
@@ -265,43 +265,43 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
         CASE  data_source_type.
           WHEN ZDMO_cl_rap_node=>data_source_types-cds_view or ZDMO_cl_rap_node=>data_source_types-abstract_entity .
             "first add cds views from software component
-            LOOP AT lt_cds_views INTO DATA(ls_cds_view).
-              DATA(view_type) = ls_cds_view->get_type( ).
-              IF view_type = xco_cp_data_definition=>type->view_entity OR
-                 view_type = xco_cp_data_definition=>type->view OR
-                 view_type = xco_cp_data_definition=>type->abstract_entity.
-                business_data_line-package_name = package_name.
-                business_data_line-name = ls_cds_view->name.
-                business_data_line-language_version = abap_language_version.
-                business_data_line-type = data_source_type .
-                business_data_line-is_root_node = is_root_node.
-                business_data_line-parent_data_source = parent_data_source.
-                APPEND business_data_line TO business_data.
-              ENDIF.
-            ENDLOOP.
+*            LOOP AT lt_cds_views INTO DATA(ls_cds_view).
+*              DATA(view_type) = ls_cds_view->get_type( ).
+*              IF view_type = xco_cp_data_definition=>type->view_entity OR
+*                 view_type = xco_cp_data_definition=>type->view OR
+*                 view_type = xco_cp_data_definition=>type->abstract_entity.
+*                business_data_line-package_name = package_name.
+*                business_data_line-name = ls_cds_view->name.
+*                business_data_line-language_version = abap_language_version.
+*                business_data_line-type = data_source_type .
+*                business_data_line-is_root_node = is_root_node.
+*                business_data_line-parent_data_source = parent_data_source.
+*                APPEND business_data_line TO business_data.
+*              ENDIF.
+*            ENDLOOP.
 
-            "get c1-released cds views
-            SELECT * FROM i_apisforclouddevelopment
-                                    WHERE objectdirectorytype = 'DDLS' AND
-                                          releasedobjectname LIKE @search_string
-                                    INTO TABLE @DATA(released_cds_views).
-
-            LOOP AT released_cds_views INTO DATA(released_cds_view).
-              DATA(lo_data_definition) = xco_lib->get_data_definition( CONV #( released_cds_view-releasedobjectname ) ).
-              view_type = lo_data_definition->get_type( ).
-
-              IF view_type = xco_cp_data_definition=>type->view_entity OR
-                           view_type = xco_cp_data_definition=>type->view OR
-                           view_type = xco_cp_data_definition=>type->abstract_entity.
-                business_data_line-package_name = package_name.
-                business_data_line-name = released_cds_view-releasedobjectname.
-                business_data_line-language_version = abap_language_version.
-                business_data_line-type = data_source_type .
-                business_data_line-is_root_node = is_root_node.
-                business_data_line-parent_data_source = parent_data_source.
-                APPEND business_data_line TO business_data.
-              ENDIF.
-            ENDLOOP.
+*            "get c1-released cds views
+*            SELECT * FROM i_apisforclouddevelopment
+*                                    WHERE objectdirectorytype = 'DDLS' AND
+*                                          releasedobjectname LIKE @search_string
+*                                    INTO TABLE @DATA(released_cds_views).
+*
+*            LOOP AT released_cds_views INTO DATA(released_cds_view).
+*              DATA(lo_data_definition) = xco_lib->get_data_definition( CONV #( released_cds_view-releasedobjectname ) ).
+*              view_type = lo_data_definition->get_type( ).
+*
+*              IF view_type = xco_cp_data_definition=>type->view_entity OR
+*                           view_type = xco_cp_data_definition=>type->view OR
+*                           view_type = xco_cp_data_definition=>type->abstract_entity.
+*                business_data_line-package_name = package_name.
+*                business_data_line-name = released_cds_view-releasedobjectname.
+*                business_data_line-language_version = abap_language_version.
+*                business_data_line-type = data_source_type .
+*                business_data_line-is_root_node = is_root_node.
+*                business_data_line-parent_data_source = parent_data_source.
+*                APPEND business_data_line TO business_data.
+*              ENDIF.
+*            ENDLOOP.
 
           WHEN ZDMO_cl_rap_node=>data_source_types-table.
             LOOP AT lt_tables INTO DATA(ls_table).

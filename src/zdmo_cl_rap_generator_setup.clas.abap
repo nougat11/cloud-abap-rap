@@ -133,20 +133,22 @@ CLASS ZDMO_CL_RAP_GENERATOR_SETUP IMPLEMENTATION.
 
         r_job_catalog_name = |Job catalog { zdmo_cl_rap_node=>job_catalog_name } created succesfully|. " zdmo_cl_rap_node=>job_catalog_name.
 
-      CATCH cx_apj_dt_content INTO DATA(lx_apj_dt_content).
+catch cx_root into data(lx_apj_dt_content).
 
-        IF NOT ( lx_apj_dt_content->if_t100_message~t100key-msgno = cx_apj_dt_content=>cx_object_already_exists-msgno AND
-                 lx_apj_dt_content->if_t100_message~t100key-msgid = cx_apj_dt_content=>cx_object_already_exists-msgid AND
-                 lx_apj_dt_content->object = 'ZDMO_RAP_GEN_CATATALOG_ENTRY' ).
-          longtext = lx_apj_dt_content->get_text( ).
-          RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
-                                                     mv_value   = CONV #( longtext-msgv1 )
-                                                     mv_value_2 = CONV #( longtext-msgv2 )
-                                                     previous   = lx_apj_dt_content
-                                                     ).
-        ELSE.
-          r_job_catalog_name = lx_apj_dt_content->get_text(  ).
-        ENDIF.
+*      CATCH cx_apj_dt_content INTO DATA(lx_apj_dt_content).
+
+*        IF NOT ( lx_apj_dt_content->if_t100_message~t100key-msgno = cx_apj_dt_content=>cx_object_already_exists-msgno AND
+*                 lx_apj_dt_content->if_t100_message~t100key-msgid = cx_apj_dt_content=>cx_object_already_exists-msgid AND
+*                 lx_apj_dt_content->object = 'ZDMO_RAP_GEN_CATATALOG_ENTRY' ).
+*          longtext = lx_apj_dt_content->get_text( ).
+*          RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
+*                                                     mv_value   = CONV #( longtext-msgv1 )
+*                                                     mv_value_2 = CONV #( longtext-msgv2 )
+*                                                     previous   = lx_apj_dt_content
+*                                                     ).
+*        ELSE.
+*          r_job_catalog_name = lx_apj_dt_content->get_text(  ).
+*        ENDIF.
     ENDTRY.
   ENDMETHOD.
 
@@ -175,18 +177,18 @@ CLASS ZDMO_CL_RAP_GENERATOR_SETUP IMPLEMENTATION.
         r_job_template_name = |Job template { zdmo_cl_rap_node=>job_template_name } generated successfully|."zdmo_cl_rap_node=>job_template_name.
 
       CATCH cx_apj_dt_content INTO DATA(lx_apj_dt_content).
-        IF  NOT ( lx_apj_dt_content->if_t100_message~t100key-msgno = cx_apj_dt_content=>cx_object_already_exists-msgno AND
-                 lx_apj_dt_content->if_t100_message~t100key-msgid = cx_apj_dt_content=>cx_object_already_exists-msgid AND
-                 lx_apj_dt_content->object = 'ZDMO_RAP_GEN_JOB_TEMPLATE' ).
-          longtext = lx_apj_dt_content->get_text( ).
-          RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
-                                                     mv_value   = CONV #( longtext-msgv1 )
-                                                     mv_value_2 = CONV #( longtext-msgv2 )
-                                                     previous   = lx_apj_dt_content
-                                                     ).
-        ELSE.
-          r_job_template_name = lx_apj_dt_content->get_text(  ).
-        ENDIF.
+*        IF  NOT ( lx_apj_dt_content->if_t100_message~t100key-msgno = cx_apj_dt_content=>cx_object_already_exists-msgno AND
+*                 lx_apj_dt_content->if_t100_message~t100key-msgid = cx_apj_dt_content=>cx_object_already_exists-msgid AND
+*                 lx_apj_dt_content->object = 'ZDMO_RAP_GEN_JOB_TEMPLATE' ).
+*          longtext = lx_apj_dt_content->get_text( ).
+*          RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
+*                                                     mv_value   = CONV #( longtext-msgv1 )
+*                                                     mv_value_2 = CONV #( longtext-msgv2 )
+*                                                     previous   = lx_apj_dt_content
+*                                                     ).
+*        ELSE.
+*          r_job_template_name = lx_apj_dt_content->get_text(  ).
+*        ENDIF.
     ENDTRY.
   ENDMETHOD.
 
@@ -257,77 +259,77 @@ CLASS ZDMO_CL_RAP_GENERATOR_SETUP IMPLEMENTATION.
 
   METHOD create_service_binding.
 
-    DATA service_binding_name TYPE sxco_srvb_object_name  VALUE 'ZDMO_UI_RAP_GENERATOR_O2'.
-    DATA service_definition_name TYPE  sxco_srvd_object_name  VALUE 'ZDMO_RAPGENERATORBO'.
-    DATA longtext      TYPE t_longtext.
-    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
-
-    IF xco_on_prem_library->on_premise_branch_is_used(  ) = abap_true.
-      xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
-    ELSE.
-      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
-    ENDIF.
-
-    DATA(service_definition) = xco_lib->get_service_definition( service_definition_name ).
-
-    IF service_definition IS INITIAL.
-      RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
-                                                 mv_value   = CONV #( service_definition_name )
-                                                 mv_value_2 = CONV #( 'does not exist' )
-                                                 ).
-    ENDIF.
-
-    DATA(service_binding) = xco_lib->get_service_binding( service_binding_name ).
-
-    IF service_binding->if_xco_ar_object~exists(  ) = abap_true.
-      r_service_binding_mame = |Service binding { service_binding_name } does already exist|.
-      EXIT.
-    ENDIF.
-
-    TRY.
-
-        "cloud
-        DATA mo_environment TYPE REF TO if_xco_cp_gen_env_dev_system.
-        DATA mo_srvb_put_operation    TYPE REF TO if_xco_cp_gen_d_o_put .
-        mo_environment = xco_cp_generation=>environment->dev_system( transport_request )  .
-        mo_srvb_put_operation = mo_environment->create_put_operation( ).
-
-        "on prem
-*        DATA mo_environment           TYPE REF TO if_xco_gen_environment .
-*        DATA mo_srvb_put_operation    TYPE REF TO if_xco_gen_o_mass_put.
-*        IF xco_lib->get_package( package_of_rap_generator->name  )->read( )-property-record_object_changes = abap_true.
-*          mo_environment = xco_generation=>environment->transported( transport_request ).
-*        ELSE.
-*          mo_environment = xco_generation=>environment->local.
-*        ENDIF.
-*        mo_srvb_put_operation = mo_environment->create_mass_put_operation( ).
-
-        DATA(specification_srvb) = mo_srvb_put_operation->for-srvb->add_object(   service_binding_name
-                                        )->set_package( package_name_of_rap_generator
-                                        )->create_form_specification( ).
-
-        specification_srvb->set_short_description( |Service binding for RAP Generator| ) ##no_text.
-
-        specification_srvb->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_ui ).
-
-        specification_srvb->add_service( )->add_version( '0001' )->set_service_definition( service_definition_name ).
-
-        DATA(result) = mo_srvb_put_operation->execute(  ).
-
-
-        r_service_binding_mame = |Service binding { service_binding_name } generated successfully|.
-*        DATA(findings) = result->findings.
-*        DATA(findings_list) = findings->get( ).
-      CATCH cx_root INTO DATA(cx_root).
-
-        longtext = cx_root->get_text( ).
-        RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>root_cause_exception
-                                                   mv_value   = CONV #( longtext-msgv1 )
-                                                   mv_value_2 = CONV #( longtext-msgv2 )
-                                                   previous   = cx_root
-                                                   ).
-    ENDTRY.
-
+*    DATA service_binding_name TYPE sxco_srvb_object_name  VALUE 'ZDMO_UI_RAP_GENERATOR_O2'.
+*    DATA service_definition_name TYPE  sxco_srvd_object_name  VALUE 'ZDMO_RAPGENERATORBO'.
+*    DATA longtext      TYPE t_longtext.
+*    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
+*
+*    IF xco_on_prem_library->on_premise_branch_is_used(  ) = abap_true.
+*      xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+*    ELSE.
+*      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
+*    ENDIF.
+*
+*    DATA(service_definition) = xco_lib->get_service_definition( service_definition_name ).
+*
+*    IF service_definition IS INITIAL.
+*      RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>job_scheduling_error
+*                                                 mv_value   = CONV #( service_definition_name )
+*                                                 mv_value_2 = CONV #( 'does not exist' )
+*                                                 ).
+*    ENDIF.
+*
+*    DATA(service_binding) = xco_lib->get_service_binding( service_binding_name ).
+*
+*    IF service_binding->if_xco_ar_object~exists(  ) = abap_true.
+*      r_service_binding_mame = |Service binding { service_binding_name } does already exist|.
+*      EXIT.
+*    ENDIF.
+*
+*    TRY.
+*
+*        "cloud
+*        DATA mo_environment TYPE REF TO if_xco_cp_gen_env_dev_system.
+*        DATA mo_srvb_put_operation    TYPE REF TO if_xco_cp_gen_d_o_put .
+*        mo_environment = xco_cp_generation=>environment->dev_system( transport_request )  .
+*        mo_srvb_put_operation = mo_environment->create_put_operation( ).
+*
+*        "on prem
+**        DATA mo_environment           TYPE REF TO if_xco_gen_environment .
+**        DATA mo_srvb_put_operation    TYPE REF TO if_xco_gen_o_mass_put.
+**        IF xco_lib->get_package( package_of_rap_generator->name  )->read( )-property-record_object_changes = abap_true.
+**          mo_environment = xco_generation=>environment->transported( transport_request ).
+**        ELSE.
+**          mo_environment = xco_generation=>environment->local.
+**        ENDIF.
+**        mo_srvb_put_operation = mo_environment->create_mass_put_operation( ).
+*
+*        DATA(specification_srvb) = mo_srvb_put_operation->for-srvb->add_object(   service_binding_name
+*                                        )->set_package( package_name_of_rap_generator
+*                                        )->create_form_specification( ).
+*
+*        specification_srvb->set_short_description( |Service binding for RAP Generator| ) ##no_text.
+*
+*        specification_srvb->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_ui ).
+*
+*        specification_srvb->add_service( )->add_version( '0001' )->set_service_definition( service_definition_name ).
+*
+*        DATA(result) = mo_srvb_put_operation->execute(  ).
+*
+*
+*        r_service_binding_mame = |Service binding { service_binding_name } generated successfully|.
+**        DATA(findings) = result->findings.
+**        DATA(findings_list) = findings->get( ).
+*      CATCH cx_root INTO DATA(cx_root).
+*
+*        longtext = cx_root->get_text( ).
+*        RAISE EXCEPTION NEW zdmo_cx_rap_generator( textid     = zdmo_cx_rap_generator=>root_cause_exception
+*                                                   mv_value   = CONV #( longtext-msgv1 )
+*                                                   mv_value_2 = CONV #( longtext-msgv2 )
+*                                                   previous   = cx_root
+*                                                   ).
+*    ENDTRY.
+*
 
   ENDMETHOD.
 ENDCLASS.

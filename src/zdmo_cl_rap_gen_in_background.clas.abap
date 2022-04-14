@@ -164,9 +164,11 @@ CLASS zdmo_cl_rap_gen_in_background IMPLEMENTATION.
         ENDLOOP.
         cl_bali_log_db=>get_instance( )->save_log(
                                                    log = application_log
-                                                   assign_to_current_appl_job = abap_true
+*                                                   assign_to_current_appl_job = abap_true
                                                    ).
       CATCH ZDMO_cx_rap_generator INTO DATA(rap_generator_exception).
+
+        DATA(rap_generator_exception_text) = rap_generator_exception->get_text(  ).
 
         application_log->add_item( item = cl_bali_exception_setter=>create(
                                      severity = if_bali_constants=>c_severity_error
@@ -174,7 +176,7 @@ CLASS zdmo_cl_rap_gen_in_background IMPLEMENTATION.
 
         cl_bali_log_db=>get_instance( )->save_log(
                                                    log = application_log
-                                                   assign_to_current_appl_job = abap_true
+*                                                   assign_to_current_appl_job = abap_true
                                                    ).
 
         RAISE EXCEPTION TYPE cx_apj_rt_content
@@ -212,7 +214,7 @@ CLASS zdmo_cl_rap_gen_in_background IMPLEMENTATION.
           kind = if_apj_dt_exec_object=>parameter
           sign = 'I'
           option = 'EQ'
-          low = 'Z_###_enter_r(i)_view_name' )
+          low = 'ZR_testTP_01' )
       ).
 
     TRY.

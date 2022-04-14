@@ -48,10 +48,10 @@ CLASS zdmo_cl_rap_node DEFINITION
       END OF abap_language_version,
 
       BEGIN OF additional_fields_object_types,
-        cds_interface_view  TYPE string VALUE 'cds_interface_view',
-        cds_restricted_reuse_view type string value 'cds_restricted_reuse_view',
-        cds_projection_view TYPE string VALUE 'cds_projection_view',
-        draft_table         TYPE string VALUE 'draft_table',
+        cds_interface_view        TYPE string VALUE 'cds_interface_view',
+        cds_restricted_reuse_view TYPE string VALUE 'cds_restricted_reuse_view',
+        cds_projection_view       TYPE string VALUE 'cds_projection_view',
+        draft_table               TYPE string VALUE 'draft_table',
       END OF additional_fields_object_types,
 
       BEGIN OF root_node_repository_objects,
@@ -128,8 +128,8 @@ CLASS zdmo_cl_rap_node DEFINITION
       END OF node_object_prefix,
 
       BEGIN OF node_object_suffix,
-        control_structure TYPE string VALUE '_X',
-        draft_table       TYPE c VALUE 'D',
+        control_structure        TYPE string VALUE '_X',
+        draft_table              TYPE c VALUE 'D',
         "new suffix TP
         transactional_processing TYPE string VALUE 'TP',
       END OF node_object_suffix,
@@ -371,7 +371,7 @@ CLASS zdmo_cl_rap_node DEFINITION
 
     DATA generate_only_node_hierachy TYPE abap_bool.
 
-    DATA xco_lib TYPE REF TO ZDMO_cl_rap_xco_lib.
+    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
     DATA data_source_type    TYPE string READ-ONLY.
     DATA lt_valuehelp TYPE tt_valuehelp READ-ONLY.
     DATA lt_objects_with_add_fields TYPE tt_objects_with_add_fields READ-ONLY.
@@ -433,12 +433,12 @@ CLASS zdmo_cl_rap_node DEFINITION
       IMPORTING todo TYPE string.
 
     METHODS constructor
-      IMPORTING io_xco_lib TYPE REF TO ZDMO_cl_rap_xco_lib OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      IMPORTING io_xco_lib TYPE REF TO zdmo_cl_rap_xco_lib OPTIONAL
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_xco_lib
-      IMPORTING io_xco_lib TYPE REF TO ZDMO_cl_rap_xco_lib
-      RAISING   ZDMO_cx_rap_generator.
+      IMPORTING io_xco_lib TYPE REF TO zdmo_cl_rap_xco_lib
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_has_transactional_behavior
       IMPORTING iv_value TYPE abap_bool .
@@ -488,15 +488,15 @@ CLASS zdmo_cl_rap_node DEFINITION
 
     METHODS set_mapping
       IMPORTING it_field_mappings TYPE if_xco_gen_bdef_s_fo_b_mapping=>tt_field_mapping OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_package
       IMPORTING VALUE(iv_package) TYPE sxco_package
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_entity_name
       IMPORTING VALUE(iv_entity_name) TYPE sxco_ddef_alias_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS get_implementation_type
       RETURNING VALUE(rv_implementation_type) TYPE string.
@@ -515,19 +515,19 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS set_implementation_type
       IMPORTING
                 VALUE(iv_implementation_type) TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
 
 
     METHODS add_child
       RETURNING VALUE(ro_child_node)
                   TYPE REF TO zdmo_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS add_virtual_root_node
       RETURNING VALUE(ro_virtual_root_node)
                   TYPE REF TO zdmo_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
 
 
@@ -535,51 +535,51 @@ CLASS zdmo_cl_rap_node DEFINITION
       IMPORTING
                 iv_parameter_name TYPE string
                 iv_value          TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS check_table_package_assignment
-      RAISING ZDMO_cx_rap_generator.
+      RAISING zdmo_cx_rap_generator.
 
     METHODS finalize
-      RAISING ZDMO_cx_rap_generator.
+      RAISING zdmo_cx_rap_generator.
 
     METHODS validate_bo
-      RAISING ZDMO_cx_rap_generator.
+      RAISING zdmo_cx_rap_generator.
 
     METHODS get_fields
-      RAISING ZDMO_cx_rap_generator.
+      RAISING zdmo_cx_rap_generator.
 
     METHODS set_fields
       IMPORTING it_fields TYPE tt_fields
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS get_fields_persistent_table
-      RAISING ZDMO_cx_rap_generator.
+      RAISING zdmo_cx_rap_generator.
 
     METHODS set_namespace
       IMPORTING
                 iv_namespace TYPE sxco_ar_object_name OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_prefix
       IMPORTING
                 iv_prefix TYPE    sxco_ar_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_suffix
       IMPORTING
                 iv_suffix TYPE    sxco_ar_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_parent
       IMPORTING
                 io_parent_node TYPE REF TO zdmo_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_root
       IMPORTING
                 io_root_node TYPE REF TO zdmo_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS is_root RETURNING VALUE(rv_is_root) TYPE abap_bool.
     METHODS is_virtual_root RETURNING VALUE(rv_is_virtual_root) TYPE abap_bool.
@@ -591,21 +591,21 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS set_table
       IMPORTING
                 iv_table TYPE sxco_ar_object_name OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_cds_view
       IMPORTING
                 iv_cds_view TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_structure
       IMPORTING
                 iv_structure TYPE sxco_ad_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_abap_type
       IMPORTING iv_abap_type TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS split_and_check_abap_type_name
       IMPORTING iv_abap_type_name TYPE string
@@ -615,155 +615,155 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS set_data_source
       IMPORTING
                 iv_data_source TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_binding_type
       IMPORTING
                 iv_binding_type TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_transport_request
       IMPORTING
                 iv_transport_request TYPE sxco_transport OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_persistent_table
       IMPORTING
                 iv_persistent_table TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_draft_table
       IMPORTING
                 iv_draft_table TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_data_source_type
       IMPORTING
                 iv_data_source_type TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS has_childs
       RETURNING VALUE(rv_has_childs) TYPE abap_bool.
 
     METHODS set_semantic_key_fields
       IMPORTING it_semantic_key TYPE tt_semantic_key_fields
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_cds_i_view
       IMPORTING iv_name                   TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_cds_i_view_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_cds_r_view
       IMPORTING iv_name                   TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_cds_r_view_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_custom_entity
       IMPORTING iv_name                      TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_custom_entity_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_cds_p_view
       IMPORTING iv_name                   TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_cds_p_view_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_mde
       IMPORTING iv_name            TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_mde_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
 
     METHODS set_name_behavior_impl
       IMPORTING iv_name                     TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_behavior_imp_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_custom_query_impl
       IMPORTING iv_name                           TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_custom_query_impl_class) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_behavior_def_r
       IMPORTING iv_name                       TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_behavior_dev_i_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_behavior_def_p
       IMPORTING iv_name                       TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_behavior_dev_p_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_service_definition
       IMPORTING iv_name                           TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_service_definition_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_service_binding
       IMPORTING iv_name                        TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_service_binding_name) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_name_control_structure
       IMPORTING iv_name                           TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_controle_structure_name) TYPE sxco_dbt_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS is_consistent
       RETURNING VALUE(rv_is_consistent) TYPE abap_bool.
 
     METHODS set_field_name_client
       IMPORTING iv_string TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_language
       IMPORTING iv_string TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_uuid
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_parent_uuid
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_root_uuid
       IMPORTING iv_string TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_created_by
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_created_at
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_last_changed_by
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_last_changed_at
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_loc_last_chg_at
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_loc_last_chg_by
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_etag_master
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS set_field_name_total_etag
       IMPORTING iv_string TYPE string OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS add_association
       IMPORTING
@@ -772,7 +772,7 @@ CLASS zdmo_cl_rap_node DEFINITION
         it_condition_fields TYPE tt_condition_fields
         iv_cardinality      TYPE string
       RAISING
-        ZDMO_cx_rap_generator.
+        zdmo_cx_rap_generator.
 
 
     METHODS add_valuehelp
@@ -785,7 +785,7 @@ CLASS zdmo_cl_rap_node DEFINITION
         iv_element            TYPE sxco_cds_field_name
         it_additional_binding TYPE tt_addtionalbinding OPTIONAL
       RAISING
-        ZDMO_cx_rap_generator.
+        zdmo_cx_rap_generator.
 
 *    METHODS add_additional_fields_old
 *      IMPORTING
@@ -817,7 +817,7 @@ CLASS zdmo_cl_rap_node DEFINITION
       IMPORTING
         iv_object_id TYPE sxco_ad_field_name OPTIONAL
       RAISING
-        ZDMO_cx_rap_generator.
+        zdmo_cx_rap_generator.
 
     METHODS set_is_abstract_or_cust_entity
       IMPORTING iv_value TYPE abap_bool DEFAULT abap_true.
@@ -852,19 +852,19 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS add_child_node_hierarchy
       IMPORTING
                 child_node TYPE REF TO zdmo_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS check_repository_object_name
       IMPORTING
                 iv_type TYPE sxco_ar_object_type
                 iv_name TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS get_unique_repository_obj_name
       IMPORTING
                 i_repository_object_type             TYPE string
       RETURNING VALUE(unique_repository_object_name) TYPE string
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS right_string
       IMPORTING
@@ -903,13 +903,13 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS get_valid_draft_table_name
       IMPORTING iv_name                    TYPE sxco_dbt_object_name OPTIONAL
       RETURNING VALUE(rv_ddic_i_view_name) TYPE sxco_dbt_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS get_valid_table_name
       IMPORTING iv_name                    TYPE sxco_dbt_object_name OPTIONAL
                 draft_table_suffix         TYPE c DEFAULT space
       RETURNING VALUE(rv_ddic_i_view_name) TYPE sxco_dbt_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS get_field
       IMPORTING
@@ -962,9 +962,9 @@ CLASS zdmo_cl_rap_node DEFINITION
     METHODS get_valid_mbc_identifier
       IMPORTING iv_name                  TYPE sxco_cds_object_name OPTIONAL
       RETURNING VALUE(rv_mbc_identifier) TYPE sxco_cds_object_name
-      RAISING   ZDMO_cx_rap_generator.
+      RAISING   zdmo_cx_rap_generator.
 
-    METHODS Check_repository_object_exists
+    METHODS check_repository_object_exists
       IMPORTING
         iv_type                         TYPE string
         iv_name                         TYPE string
@@ -1004,9 +1004,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         data_source_type = data_source_types-abstract_entity.
       WHEN OTHERS.
 
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>invalid_data_source_type
+            textid   = zdmo_cx_rap_generator=>invalid_data_source_type
             mv_value = iv_data_source_type.
 
     ENDCASE.
@@ -1034,9 +1034,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF length_mandatory_name_comp > max_length_mandatory_name_comp.
         APPEND |{ lv_mandatory_name_components } mandatory components are too long more than { max_length_mandatory_name_comp } characters| TO lt_messages.
         bo_node_is_consistent = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid        = ZDMO_cx_rap_generator=>is_too_long
+            textid        = zdmo_cx_rap_generator=>is_too_long
             mv_value      = |{ lv_mandatory_name_components } mandatory components for MBC identifier |
             mv_max_length = max_length_mandatory_name_comp.
       ENDIF.
@@ -1149,9 +1149,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF length_mandatory_name_comp > max_length_mandatory_name_comp.
         APPEND |{ lv_mandatory_name_components } mandatory components are too long more than { max_length_mandatory_name_comp } characters| TO lt_messages.
         bo_node_is_consistent = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid        = ZDMO_cx_rap_generator=>is_too_long
+            textid        = zdmo_cx_rap_generator=>is_too_long
             mv_value      = |{ lv_mandatory_name_components } mandatory components for draft table |
             mv_max_length = max_length_mandatory_name_comp.
       ENDIF.
@@ -1273,9 +1273,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       LOOP AT lt_all_childnodes INTO DATA(ls_childnode).
         IF ls_childnode->entityname = iv_entity_name.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>entity_name_is_not_unique
+              textid    = zdmo_cx_rap_generator=>entity_name_is_not_unique
               mv_entity = ls_childnode->entityname.
         ENDIF.
       ENDLOOP.
@@ -1602,9 +1602,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       WHEN implementation_type-unmanaged_semantic.
         implementationtype = implementation_type-unmanaged_semantic.
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>implementation_type_not_valid
+            textid   = zdmo_cx_rap_generator=>implementation_type_not_valid
             mv_value = iv_implementation_type.
     ENDCASE.
 
@@ -1651,9 +1651,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
             INSERT ls_mapping INTO TABLE lt_mapping.
 
           ELSE.
-            RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+            RAISE EXCEPTION TYPE zdmo_cx_rap_generator
               EXPORTING
-                textid        = ZDMO_cx_rap_generator=>field_is_not_in_datasource
+                textid        = zdmo_cx_rap_generator=>field_is_not_in_datasource
                 mv_table_name = CONV #( table_name )
                 mv_value      = CONV #( ls_field_mapping-dbtable_field ).
           ENDIF.
@@ -1682,17 +1682,17 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       LOOP AT it_field_mappings INTO ls_field_mapping.
 
         IF field_name_exists_in_db_table( CONV #( ls_field_mapping-dbtable_field ) ) = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid        = ZDMO_cx_rap_generator=>field_is_not_in_datasource
+              textid        = zdmo_cx_rap_generator=>field_is_not_in_datasource
               mv_table_name = CONV #( table_name )
               mv_value      = CONV #( ls_field_mapping-dbtable_field ).
         ENDIF.
 
         IF field_name_exists_in_cds_view( CONV #( ls_field_mapping-cds_view_field ) ) = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>field_is_not_in_cds_view
+              textid    = zdmo_cx_rap_generator=>field_is_not_in_cds_view
               mv_entity = CONV #( entityname )
               mv_value  = CONV #( ls_field_mapping-dbtable_field ).
         ENDIF.
@@ -1837,9 +1837,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           ).
 
       ELSE.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>invalid_namespace
+            textid   = zdmo_cx_rap_generator=>invalid_namespace
             mv_value = |iv_namespace|.
       ENDIF.
 
@@ -1939,9 +1939,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
   METHOD set_package.
 
     IF NOT xco_lib->get_package( iv_package )->exists(  ) OR iv_package IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>package_does_not_exist
+          textid   = zdmo_cx_rap_generator=>package_does_not_exist
           mv_value = CONV #( iv_package ).
     ENDIF.
 
@@ -1955,9 +1955,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF io_parent_node IS NOT INITIAL.
       parent_node = io_parent_node.
     ELSE.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid            = ZDMO_cx_rap_generator=>parameter_is_initial
+          textid            = zdmo_cx_rap_generator=>parameter_is_initial
           mv_parameter_name = 'Parent node' ##NO_TEXT.
     ENDIF.
   ENDMETHOD.
@@ -1984,9 +1984,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         IF xco_lib->get_database_table(  CONV #( lv_table ) )->exists( ) = abap_false.
           APPEND | Table { lv_table } does not exist| TO lt_messages.
           bo_node_is_consistent = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>table_does_not_exist
+              textid   = zdmo_cx_rap_generator=>table_does_not_exist
               mv_value = CONV #( lv_table ).
         ENDIF.
 
@@ -2025,9 +2025,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
   METHOD set_root.
     IF  io_root_node IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid            = ZDMO_cx_rap_generator=>parameter_is_initial
+          textid            = zdmo_cx_rap_generator=>parameter_is_initial
           mv_parameter_name = 'Parent node' ##NO_TEXT.
     ENDIF.
     IF me <> io_root_node.
@@ -2037,9 +2037,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF me->is_root(  ) .
         root_node = io_root_node.
       ELSE.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>is_not_a_root_node
+            textid    = zdmo_cx_rap_generator=>is_not_a_root_node
             mv_entity = io_root_node->entityname.
       ENDIF.
     ENDIF.
@@ -2051,9 +2051,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     DATA ls_semantic_key TYPE ts_semantic_key.
     IF it_semantic_key IS INITIAL.
 
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid            = ZDMO_cx_rap_generator=>parameter_is_initial
+          textid            = zdmo_cx_rap_generator=>parameter_is_initial
           mv_parameter_name = 'Semantic key field(s)' ##NO_TEXT.
 
     ELSE.
@@ -2139,9 +2139,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ELSE.
       APPEND | { me->entityname } is not a root node. Service binding can only be created for the root node| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>is_not_a_root_node
+          textid    = zdmo_cx_rap_generator=>is_not_a_root_node
           mv_entity = me->entityname.
     ENDIF.
 
@@ -2178,9 +2178,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ELSE.
       APPEND | { me->entityname } is not a root node. Service defintion can only be created for the root node| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>is_not_a_root_node
+          textid    = zdmo_cx_rap_generator=>is_not_a_root_node
           mv_entity = me->entityname.
     ENDIF.
 
@@ -2225,9 +2225,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         IF xco_lib->get_database_table( CONV #( lv_table ) )->exists( ) = abap_false .
           APPEND | Table { lv_table } does not exist| TO lt_messages ##NO_TEXT .
           bo_node_is_consistent = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>table_does_not_exist
+              textid   = zdmo_cx_rap_generator=>table_does_not_exist
               mv_value = lv_table.
         ENDIF.
 
@@ -2238,9 +2238,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         IF  table_state <> xco_cp_abap_dictionary=>object_state->active.
           APPEND | Table { lv_table } is not active | TO lt_messages ##NO_TEXT .
           bo_node_is_consistent = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>table_is_inactive
+              textid   = zdmo_cx_rap_generator=>table_is_inactive
               mv_value = lv_table.
         ENDIF.
       END-TEST-SEAM.
@@ -2271,9 +2271,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       IF record_object_changes = abap_false AND iv_transport_request IS NOT INITIAL.
         DATA(error_details) = |{ me->package } does not record changes.|.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid     = ZDMO_cx_rap_generator=>invalid_transport_request
+            textid     = zdmo_cx_rap_generator=>invalid_transport_request
             mv_value   = CONV #( iv_transport_request )
             mv_value_2 = error_details.
       ELSEIF record_object_changes = abap_false AND iv_transport_request IS INITIAL..
@@ -2293,9 +2293,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       DATA(transport_object) = xco_cp_cts=>transport->for( iv_transport_request ).
 
       IF transport_object->exists(  ) = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>transport_does_not_exist
+            textid   = zdmo_cx_rap_generator=>transport_does_not_exist
             mv_value = CONV #( iv_transport_request ).
       ENDIF.
 
@@ -2307,9 +2307,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF  transport_status =  transport_desired_status .
         transport_request = iv_transport_request.
       ELSE.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid     = ZDMO_cx_rap_generator=>invalid_transport_request
+            textid     = zdmo_cx_rap_generator=>invalid_transport_request
             mv_value   = CONV #( iv_transport_request )
             mv_value_2 = error_details.
       ENDIF.
@@ -2317,36 +2317,36 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       "check if there is a modifiable transport request for this developer and this package
     ELSEIF me->package IS NOT INITIAL.
 
-      IF xco_lib->get_package( me->package  )->read( )-property-record_object_changes = abap_true.
-
-        DATA(lo_transport_target) = xco_lib->get_package( me->package
-          )->read( )-property-transport_layer->get_transport_target( ).
-
-        DATA(lo_status_filter) = xco_cp_transport=>filter->status( xco_cp_transport=>status->modifiable ).
-        DATA(lo_owner_filter) = xco_cp_transport=>filter->owner( xco_cp_abap_sql=>constraint->equal( sy-uname ) ).
-        DATA(lo_request_type_filter) = xco_cp_transport=>filter->request_type( xco_cp_transport=>type->workbench_request ).
-        DATA(lo_request_target_filter) = xco_cp_transport=>filter->request_target( xco_cp_abap_sql=>constraint->equal( lo_transport_target->value ) ).
-
-        DATA(lt_transports) = xco_cp_cts=>transports->where( VALUE #(
-          ( lo_status_filter )
-          ( lo_owner_filter )
-          ( lo_request_type_filter )
-          ( lo_request_target_filter )
-        ) )->resolve( xco_cp_transport=>resolution->request ).
-
-        "similar logic as in ADT. Select the first suitable transport request
-        "and only if no modifiable transport request for the transport target can be found
-        "create a new transport request for the transport target
-
-        IF lt_transports IS NOT INITIAL.
-          transport_request = lt_transports[ 1 ]->value.
-        ELSE.
-          DATA(new_transport_object) = xco_cp_cts=>transports->workbench( lo_transport_target->value  )->create_request( |RAP Business object - entity name: { me->root_node->entityname } | ).
-          transport_request = new_transport_object->value.
-        ENDIF.
-
-      ENDIF.
-
+*      IF xco_lib->get_package( me->package  )->read( )-property-record_object_changes = abap_true.
+*
+*        DATA(lo_transport_target) = xco_lib->get_package( me->package
+*          )->read( )-property-transport_layer->get_transport_target( ).
+*
+*        DATA(lo_status_filter) = xco_cp_transport=>filter->status( xco_cp_transport=>status->modifiable ).
+*        DATA(lo_owner_filter) = xco_cp_transport=>filter->owner( xco_cp_abap_sql=>constraint->equal( sy-uname ) ).
+*        DATA(lo_request_type_filter) = xco_cp_transport=>filter->request_type( xco_cp_transport=>type->workbench_request ).
+*        DATA(lo_request_target_filter) = xco_cp_transport=>filter->request_target( xco_cp_abap_sql=>constraint->equal( lo_transport_target->value ) ).
+*
+*        DATA(lt_transports) = xco_cp_cts=>transports->where( VALUE #(
+*          ( lo_status_filter )
+*          ( lo_owner_filter )
+*          ( lo_request_type_filter )
+*          ( lo_request_target_filter )
+*        ) )->resolve( xco_cp_transport=>resolution->request ).
+*
+*        "similar logic as in ADT. Select the first suitable transport request
+*        "and only if no modifiable transport request for the transport target can be found
+*        "create a new transport request for the transport target
+*
+*        IF lt_transports IS NOT INITIAL.
+*          transport_request = lt_transports[ 1 ]->value.
+*        ELSE.
+*          DATA(new_transport_object) = xco_cp_cts=>transports->workbench( lo_transport_target->value  )->create_request( |RAP Business object - entity name: { me->root_node->entityname } | ).
+*          transport_request = new_transport_object->value.
+*        ENDIF.
+*
+*      ENDIF.
+*
     ENDIF.
 
 
@@ -2360,15 +2360,15 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
   METHOD validate_bo.
 
-    DATA(package_type) = xco_lib->get_package( root_node->package )->read(  )-property-package_type->value.
-
-    IF package_type <> zdmo_cl_rap_node=>package_type-development_package.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-        EXPORTING
-          textid          = ZDMO_cx_rap_generator=>invalid_package_type
-          mv_value        = CONV #( package_type )
-          mv_package_name = CONV #( root_node->package ).
-    ENDIF.
+*    DATA(package_type) = xco_lib->get_package( root_node->package )->read(  )-property-package_type->value.
+*
+*    IF package_type <> zdmo_cl_rap_node=>package_type-development_package.
+*      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*        EXPORTING
+*          textid          = ZDMO_cx_rap_generator=>invalid_package_type
+*          mv_value        = CONV #( package_type )
+*          mv_package_name = CONV #( root_node->package ).
+*    ENDIF.
 
 
     IF data_source_type = data_source_types-table.
@@ -2379,17 +2379,17 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       INTO TABLE @DATA(result_client) .
 
       IF result_client IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>clnt_is_not_key_field
+            textid   = zdmo_cx_rap_generator=>clnt_is_not_key_field
             mv_value = field_name-client.
       ENDIF.
     ENDIF.
 
     IF generate_custom_entity(  ) AND draft_enabled = abap_true.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>no_draft_for_cust_entites
+          textid    = zdmo_cx_rap_generator=>no_draft_for_cust_entites
           mv_entity = entityname.
     ENDIF.
 
@@ -2399,9 +2399,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF ( is_child( ) OR is_grand_child_or_deeper(  ) ) AND
         generate_custom_entity(  ).
       IF NOT line_exists( lt_fields[ name = field_name-etag_master ] ).
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>no_etag_delegation_support
+            textid    = zdmo_cx_rap_generator=>no_etag_delegation_support
             mv_entity = entityname.
       ENDIF.
     ENDIF.
@@ -2414,9 +2414,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       SELECT * FROM @lt_fields AS fields WHERE name  = @field_name-uuid INTO TABLE @DATA(result_uuid).
 
       IF result_uuid IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>field_uuid_missing
+            textid   = zdmo_cx_rap_generator=>field_uuid_missing
             mv_value = CONV #( field_name-uuid ).
       ENDIF.
 
@@ -2430,9 +2430,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         " that's ok
       ELSEIF numberofrecords = 1 AND
          (  result_uuid[ 1 ]-built_in_type_length <> uuid_length OR result_uuid[ 1 ]-built_in_type <> uuid_type ).
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>uuid_has_invalid_data_type
+            textid   = zdmo_cx_rap_generator=>uuid_has_invalid_data_type
             mv_value = CONV #( field_name-uuid ).
       ENDIF.
 
@@ -2441,9 +2441,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
                                            INTO TABLE @result_uuid.
 
       IF result_uuid IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>has_no_key_field
+            textid    = zdmo_cx_rap_generator=>has_no_key_field
             mv_entity = entityname.
       ENDIF.
 
@@ -2451,9 +2451,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
 
       IF numberofrecords = 1 AND  result_uuid[ 1 ]-name <> field_name-uuid.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>uuid_is_not_key_field
+            textid    = zdmo_cx_rap_generator=>uuid_is_not_key_field
             mv_entity = entityname
             mv_value  = field_name-uuid.
       ENDIF.
@@ -2468,9 +2468,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
 
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>more_than_one_key_field
+            textid    = zdmo_cx_rap_generator=>more_than_one_key_field
             mv_entity = entityname
             mv_value  = key_fields.
       ENDIF.
@@ -2482,9 +2482,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         SELECT * FROM @lt_fields AS fields WHERE name  = @field_name-parent_uuid INTO TABLE @DATA(result_parent_uuid).
 
         IF result_parent_uuid IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>field_parent_uuid_missing
+              textid   = zdmo_cx_rap_generator=>field_parent_uuid_missing
               mv_value = CONV #( field_name-parent_uuid ).
         ENDIF.
 
@@ -2495,9 +2495,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           " that's ok
         ELSEIF numberofrecords = 1 AND
            ( result_parent_uuid[ 1 ]-built_in_type_length <> uuid_length OR result_parent_uuid[ 1 ]-built_in_type <> uuid_type ).
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>uuid_has_invalid_data_type
+              textid   = zdmo_cx_rap_generator=>uuid_has_invalid_data_type
               mv_value = CONV #( field_name-parent_uuid ).
         ENDIF.
 
@@ -2508,9 +2508,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         SELECT * FROM @lt_fields AS fields WHERE name  = @field_name-root_uuid INTO TABLE @DATA(result_root_uuid).
 
         IF result_root_uuid IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>field_root_uuid_missing
+              textid   = zdmo_cx_rap_generator=>field_root_uuid_missing
               mv_value = CONV #( field_name-root_uuid ).
         ENDIF.
 
@@ -2522,9 +2522,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           " that's ok
         ELSEIF numberofrecords = 1 AND
            ( result_root_uuid[ 1 ]-built_in_type_length <> uuid_length OR result_root_uuid[ 1 ]-built_in_type <> uuid_type ).
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid   = ZDMO_cx_rap_generator=>uuid_has_invalid_data_type
+              textid   = zdmo_cx_rap_generator=>uuid_has_invalid_data_type
               mv_value = CONV #( field_name-root_uuid ).
         ENDIF.
 
@@ -2542,9 +2542,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       IF draft_table_name IS INITIAL.
 
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid         = ZDMO_cx_rap_generator=>no_draft_table_specified
+            textid         = zdmo_cx_rap_generator=>no_draft_table_specified
             mv_root_entity = me->root_node->entityname
             mv_entity      = me->entityname.
       ENDIF.
@@ -2563,9 +2563,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         ELSEIF line_exists( lt_additional_fields[ name = field_name-total_etag ] ).
           "last_changed_at = lt_additional_fields[ name = field_name-last_changed_at ]-cds_view_field.
         ELSE.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>field_total_etag_missing
+              textid    = zdmo_cx_rap_generator=>field_total_etag_missing
               mv_entity = entityname.
         ENDIF.
 
@@ -2593,9 +2593,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ELSEIF line_exists( lt_additional_fields[ name = field_name-etag_master ] ).
     ELSE.
       IF is_root(  ).
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>field_etag_master_missing
+            textid    = zdmo_cx_rap_generator=>field_etag_master_missing
             mv_entity = entityname.
       ELSE.
         APPEND |In entity: { entityname } no etag field has been specified { field_name-created_by } | TO lt_messages.
@@ -2666,9 +2666,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF NOT ( lt_result IS NOT INITIAL OR xco_lib->get_data_definition( CONV #(  lv_target ) )->exists( ) ).
         APPEND | CDS View {  lv_target  } does not exist | TO lt_messages.
         bo_node_is_consistent = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>cds_view_does_not_exist
+            textid   = zdmo_cx_rap_generator=>cds_view_does_not_exist
             mv_value = CONV #( lv_target ).
       ENDIF.
 
@@ -2681,16 +2681,16 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           WHEN  data_source_types-cds_view.
           WHEN  data_source_types-abstract_entity.
           WHEN OTHERS.
-            RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+            RAISE EXCEPTION TYPE zdmo_cx_rap_generator
               EXPORTING
-                textid = ZDMO_cx_rap_generator=>no_table_set.
+                textid = zdmo_cx_rap_generator=>no_table_set.
         ENDCASE.
       ENDIF.
 
       IF NOT field_name_exists_in_cds_view( CONV #(  ls_valuehelp-localelement  ) ).
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>not_a_field_in_cds_view
+            textid    = zdmo_cx_rap_generator=>not_a_field_in_cds_view
             mv_value  = CONV #( ls_valuehelp-localelement )
             mv_entity = me->entityname.
       ENDIF.
@@ -2709,18 +2709,18 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF NOT ( lt_result IS NOT INITIAL OR xco_lib->get_data_definition( CONV #(  lv_target ) )->exists( ) ).
         APPEND | CDS View {  lv_target  } does not exist | TO lt_messages.
         bo_node_is_consistent = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>cds_view_does_not_exist
+            textid   = zdmo_cx_rap_generator=>cds_view_does_not_exist
             mv_value = CONV #( lv_target ).
       ENDIF.
 
 
       LOOP AT ls_assocation-condition_components INTO DATA(ls_condition_fields).
         IF NOT field_name_exists_in_cds_view( CONV #( ls_condition_fields-projection_field ) ).
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>not_a_field_in_cds_view
+              textid    = zdmo_cx_rap_generator=>not_a_field_in_cds_view
               mv_value  = CONV #( ls_condition_fields-projection_field )
               mv_entity = me->entityname.
         ENDIF.
@@ -2729,9 +2729,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     "validate object id
     IF object_id IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>no_object_id_set
+          textid    = zdmo_cx_rap_generator=>no_object_id_set
           mv_entity = entityname.
     ELSE.
       DATA object_id_upper_case  TYPE sxco_ad_field_name.
@@ -2739,9 +2739,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       SELECT SINGLE * FROM @lt_fields AS db_field WHERE name  = @object_id_upper_case INTO @DATA(result).
       IF result IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid        = ZDMO_cx_rap_generator=>field_is_not_in_datasource
+            textid        = zdmo_cx_rap_generator=>field_is_not_in_datasource
             mv_value      = CONV #( object_id_upper_case )
             mv_table_name = CONV #( table_name ).
       ENDIF.
@@ -2762,9 +2762,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
             implementationtype = implementation_type-managed_semantic.
 
       IF semantic_key IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid = ZDMO_cx_rap_generator=>no_semantic_key_set.
+            textid = zdmo_cx_rap_generator=>no_semantic_key_set.
       ENDIF.
 
       FIELD-SYMBOLS <ls_semantic_key> LIKE LINE OF semantic_key.
@@ -2774,9 +2774,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         SELECT SINGLE * FROM @lt_fields AS semantickeyalias WHERE name  = @<ls_semantic_key>-name INTO @DATA(resultsemantickeyalias).
 
         IF resultsemantickeyalias IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid                = ZDMO_cx_rap_generator=>sematic_key_is_not_in_table
+              textid                = zdmo_cx_rap_generator=>sematic_key_is_not_in_table
               mv_semantic_key_field = CONV #( <ls_semantic_key>-name )
               mv_table_name         = CONV #( table_name ).
         ELSE.
@@ -2813,9 +2813,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         SELECT SINGLE * FROM @lt_fields_persistent_table AS db_field WHERE name  = @lv_dbtablefield INTO @DATA(result_dbtable_field).
 
         IF result_dbtable_field IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid        = ZDMO_cx_rap_generator=>field_is_not_in_datasource
+              textid        = zdmo_cx_rap_generator=>field_is_not_in_datasource
               mv_value      = CONV #( ls_field_mapping-dbtable_field )
               mv_table_name = CONV #( table_name ).
         ENDIF.
@@ -2825,9 +2825,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       SELECT SINGLE * FROM @lt_fields AS cds_view_field WHERE cds_view_field  = @ls_field_mapping-cds_view_field INTO @DATA(result_cds_view_field).
       IF result_cds_view_field IS INITIAL.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid    = ZDMO_cx_rap_generator=>field_is_not_in_cds_view
+            textid    = zdmo_cx_rap_generator=>field_is_not_in_cds_view
             mv_value  = CONV #( ls_field_mapping-cds_view_field )
             mv_entity = CONV #( rap_node_objects-cds_view_r ).
       ENDIF.
@@ -2839,16 +2839,16 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF me->manage_business_configuration = abap_true.
 
       IF me->draft_enabled = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>not_draft_enabled
+            textid   = zdmo_cx_rap_generator=>not_draft_enabled
             mv_value = CONV #( me->root_node->entityname ).
       ENDIF.
 
       IF me->binding_type <> binding_type_name-odata_v4_ui.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>no_ui_v4_service_binding
+            textid   = zdmo_cx_rap_generator=>no_ui_v4_service_binding
             mv_value = CONV #( me->root_node->entityname ).
       ENDIF.
 
@@ -2858,9 +2858,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     IF me->root_node->publish_service = abap_true
        AND me->root_node->skip_activation = abap_true.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid = ZDMO_cx_rap_generator=>publish_needs_active_srvd.
+          textid = zdmo_cx_rap_generator=>publish_needs_active_srvd.
 
       .
     ENDIF.
@@ -2869,9 +2869,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     IF is_customizing_table = abap_true AND is_grand_child_or_deeper(  ).
       "&1 Grandchild nodes are not supported for &2 = &3.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid     = ZDMO_cx_rap_generator=>grand_child_not_supported
+          textid     = zdmo_cx_rap_generator=>grand_child_not_supported
           mv_entity  = entityname
           mv_value   = 'iscustomizingtable'
           mv_value_2 = 'abap_true'.
@@ -2879,9 +2879,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ENDIF.
 
     IF manage_business_configuration = abap_true AND  is_grand_child_or_deeper(  ).
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid     = ZDMO_cx_rap_generator=>grand_child_not_supported
+          textid     = zdmo_cx_rap_generator=>grand_child_not_supported
           mv_entity  = entityname
           mv_value   = 'addtomanagebusinessconfiguration'
           mv_value_2 = 'abap_true'.
@@ -2897,9 +2897,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
        ( binding_type <> binding_type_name-odata_v4_ui OR
          draft_enabled = abap_false ).
 
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>mult_edit_not_supported
+          textid    = zdmo_cx_rap_generator=>mult_edit_not_supported
           mv_entity = entityname.
 
     ENDIF.
@@ -2911,9 +2911,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       DATA(delivery_class) = customizing_database_table->content( )->get_delivery_class(  )->value.
 
       IF delivery_class <> 'C'.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid     = ZDMO_cx_rap_generator=>delivery_class_c_required
+            textid     = zdmo_cx_rap_generator=>delivery_class_c_required
             mv_value   = CONV #( table_name )
             mv_value_2 = CONV #( delivery_class ).
       ENDIF.
@@ -2935,9 +2935,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       WHEN data_source_types-abap_type.
         set_abap_type( iv_data_source ).
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid = ZDMO_cx_rap_generator=>invalid_data_source_type.
+            textid = zdmo_cx_rap_generator=>invalid_data_source_type.
     ENDCASE.
     data_source_name = iv_data_source .
 
@@ -2958,9 +2958,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       WHEN additional_fields_object_types-cds_projection_view.
       WHEN additional_fields_object_types-draft_table.
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>cannot_add_additional_fields
+            textid   = zdmo_cx_rap_generator=>cannot_add_additional_fields
             mv_value = iv_object.
     ENDCASE.
 
@@ -2987,9 +2987,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     DATA(underscore) = substring( val = iv_name  len = 1 ).
 
     IF underscore <> '_'.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>starts_not_with_underscore
+          textid   = zdmo_cx_rap_generator=>starts_not_with_underscore
           mv_value = CONV #( iv_name ).
     ENDIF.
 
@@ -2999,9 +2999,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
              OR iv_cardinality = cardinality-one_to_one.
       ls_assocation-cardinality = iv_cardinality.
     ELSE.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>assocation_is_not_supported
+          textid   = zdmo_cx_rap_generator=>assocation_is_not_supported
           mv_value = iv_cardinality.
     ENDIF.
 
@@ -3110,9 +3110,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
           WHEN additionalbinding_usage-result .
           WHEN '' .
           WHEN OTHERS.
-            RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+            RAISE EXCEPTION TYPE zdmo_cx_rap_generator
               EXPORTING
-                textid   = ZDMO_cx_rap_generator=>usage_is_not_supported
+                textid   = zdmo_cx_rap_generator=>usage_is_not_supported
                 mv_value = ls_additional_binding-usage.
         ENDCASE.
 
@@ -3203,9 +3203,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF contains_no_blanks( CONV #( iv_value ) ) = abap_false.
       APPEND |Name of { iv_parameter_name } { iv_value } contains spaces| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>contains_spaces
+          textid   = zdmo_cx_rap_generator=>contains_spaces
           mv_value = |Object:{ iv_parameter_name } Name:{ iv_value }|.
     ENDIF.
 
@@ -3213,9 +3213,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF is_alpha_numeric( CONV #( iv_value ) ) = abap_false.
       APPEND |Name of { iv_parameter_name } { iv_value } contains non alpha numeric characters| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>non_alpha_numeric_characters
+          textid   = zdmo_cx_rap_generator=>non_alpha_numeric_characters
           mv_value = |Object:{ iv_parameter_name } Name:{ iv_value }|.
     ENDIF.
 
@@ -3225,9 +3225,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF strlen( iv_value ) > lv_max_length.
       APPEND |Name of { iv_value } is too long ( { lv_max_length } chararcters max)| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid        = ZDMO_cx_rap_generator=>is_too_long
+          textid        = zdmo_cx_rap_generator=>is_too_long
           mv_value      = |{ iv_value } ({ strlen( iv_value ) })|
           mv_max_length = lv_max_length.
     ENDIF.
@@ -3471,14 +3471,14 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     "check if repository already exists
 
-    lv_object_already_exists = Check_repository_object_exists( iv_type = lv_type
+    lv_object_already_exists = check_repository_object_exists( iv_type = lv_type
                                                                iv_name = lv_name ).
 
     IF lv_object_already_exists = abap_true.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid     = ZDMO_cx_rap_generator=>repository_already_exists
+          textid     = zdmo_cx_rap_generator=>repository_already_exists
           mv_value   = lv_name
           mv_value_2 = lv_type.
     ENDIF.
@@ -3514,9 +3514,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF is_alpha_numeric( CONV #( object_name_without_namespace ) ) = abap_false.
       APPEND |Name of { lv_type } { lv_name } contains non alpha numeric characters| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>non_alpha_numeric_characters
+          textid   = zdmo_cx_rap_generator=>non_alpha_numeric_characters
           mv_value = | { lv_type }:{ lv_name }|.
     ENDIF.
 
@@ -3524,9 +3524,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF contains_no_blanks( CONV #( lv_name ) ) = abap_false.
       APPEND |Name of { lv_type } { lv_name } contains spaces| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>contains_spaces
+          textid   = zdmo_cx_rap_generator=>contains_spaces
           mv_value = |Object Type: { lv_type } Object Name:{ lv_name }|.
     ENDIF.
 
@@ -3534,9 +3534,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF strlen( lv_name ) > lv_max_length.
       APPEND |Name of { lv_type } is too long ( { lv_max_length } chararcters max)| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid        = ZDMO_cx_rap_generator=>is_too_long
+          textid        = zdmo_cx_rap_generator=>is_too_long
           mv_value      = |{ lv_name } ({ strlen( lv_name ) })|
           mv_max_length = lv_max_length.
     ENDIF.
@@ -3545,9 +3545,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF lv_type = 'TABL(Database Table)' AND underscore_at_pos_2_3( lv_name ) = abap_true.
       APPEND |Name of { lv_name } - underscore not permitted at 2nd or 3rd position| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>underscore_not_at_pos_2_3
+          textid   = zdmo_cx_rap_generator=>underscore_not_at_pos_2_3
           mv_value = lv_name.
     ENDIF.
 
@@ -3579,9 +3579,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     IF swc_name_package <> swc_name_db_table.
       IF NOT swc_name_db_table = 'ZDMO_SAP'  AND  swc_name_db_table = 'ZLOCAL'.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid          = ZDMO_cx_rap_generator=>software_comp_do_not_match
+            textid          = zdmo_cx_rap_generator=>software_comp_do_not_match
             mv_table_name   = CONV #( root_node->table_name )
             mv_package_name = CONV #( package ).
       ENDIF.
@@ -3599,9 +3599,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         swc_name_db_table = package_of_db_table-property-software_component->name.
         IF swc_name_package <> swc_name_db_table.
           IF NOT swc_name_db_table = 'ZDMO_SAP'  AND  swc_name_db_table = 'ZLOCAL'.
-            RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+            RAISE EXCEPTION TYPE zdmo_cx_rap_generator
               EXPORTING
-                textid          = ZDMO_cx_rap_generator=>software_comp_do_not_match
+                textid          = zdmo_cx_rap_generator=>software_comp_do_not_match
                 mv_table_name   = CONV #( ls_childnode->table_name )
                 mv_package_name = CONV #( package ).
           ENDIF.
@@ -3619,7 +3619,7 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF io_xco_lib IS NOT INITIAL.
       xco_lib = io_xco_lib.
     ELSE.
-      xco_lib = NEW ZDMO_cl_rap_xco_cloud_lib( ).
+      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib( ).
     ENDIF.
 
     bo_node_is_consistent = abap_true.
@@ -3710,9 +3710,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     DATA manage_business_cfg_identifier TYPE if_mbc_cp_api_business_config=>ty_identifier.
 
     IF namespace IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid = ZDMO_cx_rap_generator=>no_namespace_set.
+          textid = zdmo_cx_rap_generator=>no_namespace_set.
     ENDIF.
 
     IF create_table = abap_true AND table_name IS INITIAL.
@@ -3733,39 +3733,39 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     CASE data_source_type.
       WHEN data_source_types-table.
         IF table_name IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>no_data_source_set
+              textid    = zdmo_cx_rap_generator=>no_data_source_set
               mv_entity = entityname.
         ENDIF.
       WHEN data_source_types-cds_view OR data_source_types-abstract_entity.
         IF cds_view_name IS INITIAL.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>no_data_source_set
+              textid    = zdmo_cx_rap_generator=>no_data_source_set
               mv_entity = entityname.
         ENDIF.
     ENDCASE.
     IF implementationtype = implementation_type-unmanaged_semantic OR
          implementationtype = implementation_type-managed_semantic.
       IF semantic_key IS INITIAL .
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid = ZDMO_cx_rap_generator=>no_semantic_key_set.
+            textid = zdmo_cx_rap_generator=>no_semantic_key_set.
       ENDIF.
     ENDIF.
 
     IF object_id IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>no_object_id_set
+          textid    = zdmo_cx_rap_generator=>no_object_id_set
           mv_entity = entityname.
     ENDIF.
 
     IF lt_fields IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>no_fields_found
+          textid    = zdmo_cx_rap_generator=>no_fields_found
           mv_entity = entityname.
     ENDIF.
 
@@ -3894,9 +3894,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
 
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>invalid_data_source_type
+            textid   = zdmo_cx_rap_generator=>invalid_data_source_type
             mv_value = data_source_type.
 
 
@@ -4314,9 +4314,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ELSE.
       APPEND | { me->entityname } is not a root node. BDEF for an interface view is only generated for the root node| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>is_not_a_root_node
+          textid    = zdmo_cx_rap_generator=>is_not_a_root_node
           mv_entity = me->entityname.
     ENDIF.
 
@@ -4350,9 +4350,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     ELSE.
       APPEND | { me->entityname } is not a root node. BDEF for a projection view is only generated for the root node| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>is_not_a_root_node
+          textid    = zdmo_cx_rap_generator=>is_not_a_root_node
           mv_entity = me->entityname.
     ENDIF.
 
@@ -4405,9 +4405,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     OR iv_binding_type = binding_type_name-odata_v2_web_api OR iv_binding_type = binding_type_name-odata_v4_web_api.
       binding_type = iv_binding_type.
     ELSE.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid     = ZDMO_cx_rap_generator=>invalid_binding_type
+          textid     = zdmo_cx_rap_generator=>invalid_binding_type
           mv_value   = binding_type
           mv_value_2 = supported_binding_types.
     ENDIF.
@@ -4445,9 +4445,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF xco_lib->get_structure( CONV #( lv_structure ) )->exists( ) = abap_false .
       APPEND | Structure { lv_structure } does not exist| TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>table_does_not_exist
+          textid   = zdmo_cx_rap_generator=>table_does_not_exist
           mv_value = CONV #( lv_structure ).
     ENDIF.
 
@@ -4458,9 +4458,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     IF  structure_state <> xco_cp_abap_dictionary=>object_state->active.
       APPEND | Structure { lv_structure } is not active | TO lt_messages.
       bo_node_is_consistent = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>table_is_inactive
+          textid   = zdmo_cx_rap_generator=>table_is_inactive
           mv_value = CONV #( lv_structure ).
     ENDIF.
 
@@ -4490,9 +4490,9 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       IF xco_lib->get_data_definition( CONV #(  lv_cds_view )  )->exists( ) = abap_false .
         APPEND | CDS View {  lv_cds_view  } does not exist | TO lt_messages.
         bo_node_is_consistent = abap_false.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>cds_view_does_not_exist
+            textid   = zdmo_cx_rap_generator=>cds_view_does_not_exist
             mv_value = CONV #( lv_cds_view ).
       ENDIF.
     ENDIF.
@@ -4939,79 +4939,79 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
   METHOD get_abap_type_components.
 
-    DATA abap_class TYPE REF TO if_xco_ao_class  .
-    DATA abap_type TYPE REF TO if_xco_ao_c_type .
-    DATA abap_class_name TYPE sxco_ao_object_name .
-    DATA abap_type_name TYPE sxco_ao_component_name.
-
-    split_and_check_abap_type_name(
-      EXPORTING
-        iv_abap_type_name = name
-      IMPORTING
-        ev_class_name     = abap_class_name
-        ev_type_name      = abap_type_name
-    ).  "( abap_type_name ).
-
-    "abap class and type have been checked in split_and_check_abap_type_name( )
-    abap_class = xco_cp_abap=>class( abap_class_name ).
-    abap_type = abap_class->definition->section-public->component->type( abap_type_name ).
-
-    DATA(typing_method) = abap_type->content( )->get_typing_method( ).
-    DATA(typing_definition) = abap_type->content( )->get_typing_definition( ).
-
-    IF typing_method->value = 1 AND typing_definition->has_value( ) = abap_true.
-      DATA(structure) = xco_lib->get_structure( CONV #( typing_definition->get_value( ) ) ).
-    ENDIF.
-    "io_components  type ref to if_xco_ad_structure
-    IF structure IS NOT INITIAL.
-      et_fields = get_structure_components( structure ).
-      "the name of the structure is needed for the statement
-      "mapping for <structure name> control <control structure> in BDEF
-      structure_name = structure->name.
-    ELSE.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-        EXPORTING
-          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
-          mv_value   = | { abap_type_name } |
-          mv_entity  = entityname
-          mv_value_2 = | ABAP type not supported. |.
-    ENDIF.
+*    DATA abap_class TYPE REF TO if_xco_ao_class  .
+*    DATA abap_type TYPE REF TO if_xco_ao_c_type .
+*    DATA abap_class_name TYPE sxco_ao_object_name .
+*    DATA abap_type_name TYPE sxco_ao_component_name.
+*
+*    split_and_check_abap_type_name(
+*      EXPORTING
+*        iv_abap_type_name = name
+*      IMPORTING
+*        ev_class_name     = abap_class_name
+*        ev_type_name      = abap_type_name
+*    ).  "( abap_type_name ).
+*
+*    "abap class and type have been checked in split_and_check_abap_type_name( )
+*    abap_class = xco_cp_abap=>class( abap_class_name ).
+*    abap_type = abap_class->definition->section-public->component->type( abap_type_name ).
+*
+*    DATA(typing_method) = abap_type->content( )->get_typing_method( ).
+*    DATA(typing_definition) = abap_type->content( )->get_typing_definition( ).
+*
+*    IF typing_method->value = 1 AND typing_definition->has_value( ) = abap_true.
+*      DATA(structure) = xco_lib->get_structure( CONV #( typing_definition->get_value( ) ) ).
+*    ENDIF.
+*    "io_components  type ref to if_xco_ad_structure
+*    IF structure IS NOT INITIAL.
+*      et_fields = get_structure_components( structure ).
+*      "the name of the structure is needed for the statement
+*      "mapping for <structure name> control <control structure> in BDEF
+*      structure_name = structure->name.
+*    ELSE.
+*      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*        EXPORTING
+*          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
+*          mv_value   = | { abap_type_name } |
+*          mv_entity  = entityname
+*          mv_value_2 = | ABAP type not supported. |.
+*    ENDIF.
 
   ENDMETHOD.
 
 
   METHOD split_and_check_abap_type_name.
 
-    DATA abap_class_name TYPE sxco_ao_object_name .
-    DATA abap_type_name TYPE sxco_ao_component_name.
-
-    DATA abap_class  TYPE REF TO if_xco_ao_class.
-    DATA abap_type  TYPE REF TO if_xco_ao_c_type.
-
-
-    SPLIT iv_abap_type_name AT '=>' INTO abap_class_name abap_type_name.
-
-    abap_class = xco_cp_abap=>class( abap_class_name ).
-
-    IF abap_class IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-        EXPORTING
-          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
-          mv_value   = | { iv_abap_type_name } |
-          mv_entity  = entityname
-          mv_value_2 = | { abap_class_name } not found |.
-    ENDIF.
-
-    abap_type = abap_class->definition->section-public->component->type( abap_type_name ).
-
-    IF abap_type IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-        EXPORTING
-          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
-          mv_value   = | { iv_abap_type_name } |
-          mv_entity  = entityname
-          mv_value_2 = | { abap_type_name } not found in class { abap_class_name } |.
-    ENDIF.
+*    DATA abap_class_name TYPE sxco_ao_object_name .
+*    DATA abap_type_name TYPE sxco_ao_component_name.
+*
+*    DATA abap_class  TYPE REF TO if_xco_ao_class.
+*    DATA abap_type  TYPE REF TO if_xco_ao_c_type.
+*
+*
+*    SPLIT iv_abap_type_name AT '=>' INTO abap_class_name abap_type_name.
+*
+*    abap_class = xco_cp_abap=>class( abap_class_name ).
+*
+*    IF abap_class IS INITIAL.
+*      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*        EXPORTING
+*          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
+*          mv_value   = | { iv_abap_type_name } |
+*          mv_entity  = entityname
+*          mv_value_2 = | { abap_class_name } not found |.
+*    ENDIF.
+*
+*    abap_type = abap_class->definition->section-public->component->type( abap_type_name ).
+*
+*    IF abap_type IS INITIAL.
+*      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*        EXPORTING
+*          textid     = ZDMO_cx_rap_generator=>invalid_abap_type_name
+*          mv_value   = | { iv_abap_type_name } |
+*          mv_entity  = entityname
+*          mv_value_2 = | { abap_type_name } not found in class { abap_class_name } |.
+*    ENDIF.
 
   ENDMETHOD.
 
@@ -5095,6 +5095,26 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
 
   METHOD get_fields_cds_view.
+
+*    DATA table_fields  TYPE ts_field  .
+*
+*    DATA(descr_ref_type) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( io_cds_view_name ) ).
+*    DATA structure_descr TYPE REF TO cl_abap_structdescr.
+*    structure_descr ?= descr_ref_type.
+*
+*    LOOP AT structure_descr->get_components(  ) INTO DATA(structure_desc).
+*
+*      table_fields-name = structure_desc-name.
+*
+*      IF useuppercamelcase = abap_true.
+*        "table_fields-cds_view_field = to_mixed( table_fields-name ).
+*        table_fields-cds_view_field = xco_cp=>string( table_fields-name )->split( '_' )->compose( xco_cp_string=>composition->pascal_case )->value.
+*      ELSE.
+*        table_fields-cds_view_field = table_fields-name.
+*      ENDIF.
+*
+*    ENDLOOP.
+
     TYPES:
       BEGIN OF ts_semantics_amount,
         currencycode TYPE string,
@@ -5123,96 +5143,96 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     DATA lo_composition TYPE sxco_t_cds_compositions .
 
     DATA(lo_data_definition) = xco_lib->get_data_definition( CONV #( io_cds_view_name ) ).
-    DATA(view_type) = lo_data_definition->get_type( ).
-
+*    DATA(view_type) = lo_data_definition->get_type( ).
+    DATA db_max_length TYPE REF TO i.
     CLEAR lo_assoc.
     CLEAR lo_composition.
 
     " method entity( ) works for getting fields for all entity types
-    CASE view_type .
-      WHEN xco_cp_data_definition=>type->view_entity.
-        lo_assoc = lo_data_definition->view_entity( )->associations->all->get(  ).
-        lo_composition = lo_data_definition->view_entity( )->compositions->all->get(  ).
-        lo_fields = lo_data_definition->view_entity( )->fields->all->get(  ).
-        view_type_value = view_type->value.
+*    CASE view_type .
+*      WHEN xco_cp_data_definition=>type->view_entity.
+    lo_assoc = lo_data_definition->view_entity( )->associations->all->get(  ).
+    lo_composition = lo_data_definition->view_entity( )->compositions->all->get(  ).
+    lo_fields = lo_data_definition->view_entity( )->fields->all->get(  ).
+*        view_type_value = view_type->value.
 
 *        DATA(view_entity) = xco_lib->get_view_entity(  CONV #( io_cds_view_name ) ).
 *
 *        DATA(lo_view_entity_Fields) = view_entity->fields->all->get(  ).
 
-        TRY.
-            DATA(components_view) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( io_cds_view_name ) )->get_components(  ).
-          CATCH cx_root INTO DATA(cx_rtti_problem_view_entity).
-            "do nothing
-            "when components_view is initial we will only see the
-            "field names in the value help
-        ENDTRY.
+    TRY.
+        DATA(components_view) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( io_cds_view_name ) )->get_components(  ).
+      CATCH cx_root INTO DATA(cx_rtti_problem_view_entity).
+        "do nothing
+        "when components_view is initial we will only see the
+        "field names in the value help
+    ENDTRY.
 
-      WHEN xco_cp_data_definition=>type->view.
-        lo_assoc = lo_data_definition->view( )->associations->all->get(  ).
-        lo_composition = lo_data_definition->view( )->compositions->all->get(  ).
-        lo_fields = lo_data_definition->view( )->fields->all->get(  ).
-        view_type_value = view_type->value.
-        "get value of annotation @AbapCatalog.sqlViewName
-        "to retrieve the name of the sql view name
-
-
-*        DATA(view) = xco_lib->get_view_entity(  CONV #( io_cds_view_name ) ).
+*      WHEN xco_cp_data_definition=>type->view.
+*        lo_assoc = lo_data_definition->view( )->associations->all->get(  ).
+*        lo_composition = lo_data_definition->view( )->compositions->all->get(  ).
+*        lo_fields = lo_data_definition->view( )->fields->all->get(  ).
+*        view_type_value = view_type->value.
+*        "get value of annotation @AbapCatalog.sqlViewName
+*        "to retrieve the name of the sql view name
 *
-*        DATA(lo_view_Fields) = view->fields->all->get(  ).
 *
-*        lo_fields = lo_view_Fields.
-        TRY.
-            components_view = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( io_cds_view_name ) )->get_components(  ).
-          CATCH cx_root INTO DATA(cx_rtti_problem_view).
-            "do nothing
-            "when components_view is initial we will only see the
-            "field names in the value help
-        ENDTRY.
-
-      WHEN xco_cp_data_definition=>type->abstract_entity.
-        set_is_abstract_or_cust_entity(  ).
-        lo_fields = lo_data_definition->abstract_entity( )->fields->all->get(  ).
-        " in abstract and custom entities associations and compositions are defined as fields
-        LOOP AT lo_fields INTO DATA(lo_field).
-          IF lo_field->content(  )->get(  )-association-target IS NOT INITIAL.
-            APPEND lo_field->name TO association_field_names.
-            APPEND lo_field->content(  )->get(  )-association-target TO association_targets.
-          ENDIF.
-          IF lo_field->content(  )->get(  )-composition-target IS NOT INITIAL.
-            APPEND lo_field->name TO  composition_field_names.
-            APPEND lo_field->content(  )->get(  )-composition-target TO composition_targets.
-          ENDIF.
-        ENDLOOP.
-        view_type_value = view_type->value.
-
-      WHEN xco_cp_data_definition=>type->custom_entity.
-
-        set_is_abstract_or_cust_entity(  ).
-        lo_fields = lo_data_definition->custom_entity( )->fields->all->get(  ).
-        " in abstract and custom entities associations and compositions are defined as fields
-        LOOP AT lo_fields INTO lo_field.
-          IF lo_field->content(  )->get(  )-association-target IS NOT INITIAL.
-            APPEND lo_field->name TO association_field_names.
-            APPEND lo_field->content(  )->get(  )-association-target TO association_targets.
-          ENDIF.
-          IF lo_field->content(  )->get(  )-composition-target IS NOT INITIAL.
-            APPEND lo_field->name TO  composition_field_names.
-            APPEND lo_field->content(  )->get(  )-composition-target TO composition_targets.
-          ENDIF.
-        ENDLOOP.
-        view_type_value = view_type->value.
-
-      WHEN OTHERS.
-
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-          EXPORTING
-            textid    = ZDMO_cx_rap_generator=>view_type_not_supported
-            mv_value  = | { view_type->value } |
-            mv_entity = entityname.
-
-
-    ENDCASE.
+**        DATA(view) = xco_lib->get_view_entity(  CONV #( io_cds_view_name ) ).
+**
+**        DATA(lo_view_Fields) = view->fields->all->get(  ).
+**
+**        lo_fields = lo_view_Fields.
+*        TRY.
+*            components_view = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( io_cds_view_name ) )->get_components(  ).
+*          CATCH cx_root INTO DATA(cx_rtti_problem_view).
+*            "do nothing
+*            "when components_view is initial we will only see the
+*            "field names in the value help
+*        ENDTRY.
+*
+*      WHEN xco_cp_data_definition=>type->abstract_entity.
+*        set_is_abstract_or_cust_entity(  ).
+*        lo_fields = lo_data_definition->abstract_entity( )->fields->all->get(  ).
+*        " in abstract and custom entities associations and compositions are defined as fields
+*        LOOP AT lo_fields INTO DATA(lo_field).
+*          IF lo_field->content(  )->get(  )-association-target IS NOT INITIAL.
+*            APPEND lo_field->name TO association_field_names.
+*            APPEND lo_field->content(  )->get(  )-association-target TO association_targets.
+*          ENDIF.
+*          IF lo_field->content(  )->get(  )-composition-target IS NOT INITIAL.
+*            APPEND lo_field->name TO  composition_field_names.
+*            APPEND lo_field->content(  )->get(  )-composition-target TO composition_targets.
+*          ENDIF.
+*        ENDLOOP.
+*        view_type_value = view_type->value.
+*
+*      WHEN xco_cp_data_definition=>type->custom_entity.
+*
+*        set_is_abstract_or_cust_entity(  ).
+*        lo_fields = lo_data_definition->custom_entity( )->fields->all->get(  ).
+*        " in abstract and custom entities associations and compositions are defined as fields
+*        LOOP AT lo_fields INTO lo_field.
+*          IF lo_field->content(  )->get(  )-association-target IS NOT INITIAL.
+*            APPEND lo_field->name TO association_field_names.
+*            APPEND lo_field->content(  )->get(  )-association-target TO association_targets.
+*          ENDIF.
+*          IF lo_field->content(  )->get(  )-composition-target IS NOT INITIAL.
+*            APPEND lo_field->name TO  composition_field_names.
+*            APPEND lo_field->content(  )->get(  )-composition-target TO composition_targets.
+*          ENDIF.
+*        ENDLOOP.
+*        view_type_value = view_type->value.
+*
+*      WHEN OTHERS.
+*
+*        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*          EXPORTING
+*            textid    = ZDMO_cx_rap_generator=>view_type_not_supported
+*            mv_value  = | { view_type->value } |
+*            mv_entity = entityname.
+*
+*
+*    ENDCASE.
 
 
     LOOP AT lo_assoc INTO DATA(assoc).
@@ -5230,8 +5250,7 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
 
 
-
-    LOOP AT lo_fields INTO lo_field.
+    LOOP AT lo_fields INTO DATA(lo_field).
 
       IF line_exists( association_field_names[ field_name = lo_field->name ] ).
         DATA(is_association) = abap_true.
@@ -5242,8 +5261,8 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
       ENDIF.
 
       "only add "real" fields to the field list
-
-      IF is_association = abap_false AND is_composition = abap_false.
+      DATA(underscore) = substring( val = lo_field->name  len = 1 ).
+      IF is_association = abap_false AND is_composition = abap_false AND underscore <> '_'.
 
         CLEAR ls_fields.
         " DATA(underscore) = substring( val = lo_field->name  len = 1 ).
@@ -5288,7 +5307,7 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
         "retrieve data elements or built in types
 
-        DATA(field_type) = lo_field->content( )->get_type(  ).
+*        DATA(field_type) = lo_field->content( )->get_type(  ).
 
         "For views (CDS views with a SQL view) and entity views "field_type" turned out to be initial.
         "For abstract entities it works
@@ -5301,71 +5320,69 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
         "information is needed to determine administrative fields such as etags when
         "data source is an entity or a view entity
 
-        IF field_type IS NOT INITIAL.
+        IF components_view IS NOT INITIAL.
 
-          IF field_type->is_data_element(  ).
+          IF line_exists( components_view[ name = ls_fields-name ] ).
 
-            ls_fields-is_data_element = abap_true.
+            DATA(element_description) = cl_abap_typedescr=>describe_by_name( components_view[ name = ls_fields-name ]-type->absolute_name ).
+            db_max_length  ?= element_description->get_property( cl_abap_typedescr=>typepropkind_dbmaxlen ).
 
-            DATA(lo_data_element) = field_type->get_data_element( ).
 
-            read_data_element(
-              EXPORTING
-                io_data_element = lo_data_element
-                is_fields       = ls_fields
-              IMPORTING
-                es_fields       = ls_fields
-            ).
+            IF components_view[ name = ls_fields-name ]-type->get_relative_name(  )  IS NOT INITIAL. " it is a data element
+              ls_fields-data_element =   components_view[ name = ls_fields-name ]-type->get_relative_name(  ).
+              ls_fields-is_data_element = abap_true.
+            ELSE. "map elementary type to built in types
+              ls_fields-is_built_in_type = abap_true.
+              CASE components_view[ name = ls_fields-name ]-type->type_kind.
 
-          ELSEIF field_type->is_built_in_type(  ).
-
-            ls_fields-is_built_in_type = abap_true.
-
-            ls_fields-built_in_type  = field_type->get_built_in_type(  )->type.
-            ls_fields-built_in_type_length = field_type->get_built_in_type(  )->length.
-            ls_fields-built_in_type_decimals = field_type->get_built_in_type(  )->decimals.
-
+                WHEN cl_abap_typedescr=>typekind_char.
+                  ls_fields-built_in_type = 'CHAR'.
+                  ls_fields-built_in_type_length  = components_view[ name = ls_fields-name ]-type->length.
+                WHEN cl_abap_typedescr=>typekind_int1.
+                  ls_fields-built_in_type = 'INT1'.
+                  ls_fields-built_in_type_length  = 3.
+                WHEN cl_abap_typedescr=>typekind_int2.
+                  ls_fields-built_in_type = 'INT2'.
+                  ls_fields-built_in_type_length  = 5.
+*          WHEN cl_abap_typedescr=>typekind_int4.
+*          table_fields-built_in_type = 'INT4'.
+*          table_fields-built_in_type_length  = 10.
+                WHEN cl_abap_typedescr=>typekind_int8.
+                  ls_fields-built_in_type = 'INT8'.
+                  ls_fields-built_in_type_length  = 19.
+                WHEN cl_abap_typedescr=>typekind_string.
+                  IF db_max_length IS NOT INITIAL.
+                    IF db_max_length->* = 536870912.
+                      ls_fields-built_in_type_length = 0.
+                    ELSE.
+                      ls_fields-built_in_type_length  = db_max_length->*.
+                    ENDIF.
+                    ls_fields-built_in_type = 'STRG'.
+                  ENDIF.
+                WHEN cl_abap_typedescr=>typekind_num. "numc
+                  ls_fields-built_in_type = 'NUMC'.
+                  ls_fields-built_in_type_length  = components_view[ name = ls_fields-name ]-type->length.
+              ENDCASE.
+            ENDIF.
 
 
 
           ENDIF.
 
-        ELSE.
+          "abstract entities created from service consumption models
+          "contain an additional field for each field that contains
+          "a value control information
 
-          CASE view_type .
-            WHEN xco_cp_data_definition=>type->view_entity OR
-                 xco_cp_data_definition=>type->view.
-
-              "components_view will be initial if the RTTI call above fails.
-
-              IF line_exists( components_view[ name = ls_fields-name ] ).
-                DATA(data_element_via_rtti) = components_view[ name = ls_fields-name ]-type->get_relative_name(  ).
-                IF data_element_via_rtti IS NOT INITIAL.
-                  ls_fields-is_data_element = abap_true.
-                  ls_fields-data_element = data_element_via_rtti.
-                ELSE.
-                  ls_fields-is_built_in_type = abap_true.
-                  "@todo:
-                  "map type_kind 'C' to 'CHAR'
-                  ls_fields-built_in_type  = components_view[ name = ls_fields-name ]-type->type_kind.
-                  ls_fields-built_in_type_length = components_view[ name = ls_fields-name ]-type->length.
-                  ls_fields-built_in_type_decimals = components_view[ name = ls_fields-name ]-type->decimals.
-                ENDIF.
-              ENDIF.
-          ENDCASE.
+          IF ls_fields-data_element NE 'RAP_CP_ODATA_VALUE_CONTROL'.
+            APPEND ls_fields TO et_fields.
+          ENDIF.
 
         ENDIF.
-        "abstract entities created from service consumption models
-        "contain an additional field for each field that contains
-        "a value control information
-
-        IF ls_fields-data_element NE 'RAP_CP_ODATA_VALUE_CONTROL'.
-          APPEND ls_fields TO et_fields.
-        ENDIF.
-
       ENDIF.
-
     ENDLOOP.
+
+
+
 
 
   ENDMETHOD.
@@ -5428,7 +5445,7 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     create_table = iv_create_table.
   ENDMETHOD.
 
-  METHOD Check_repository_object_exists.
+  METHOD check_repository_object_exists.
 
     rv_object_already_exists = abap_false.
 
@@ -5515,44 +5532,44 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
     CASE iv_type.
       WHEN 'BDEF'.
-        IF Iv_name = root_node->rap_root_node_objects-behavior_definition_r OR
+        IF iv_name = root_node->rap_root_node_objects-behavior_definition_r OR
            iv_name = root_node->rap_root_node_objects-behavior_definition_p.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'SRVD'.
-        IF Iv_name = root_node->rap_root_node_objects-service_definition.
+        IF iv_name = root_node->rap_root_node_objects-service_definition.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'SRVB'.
-        IF Iv_name = root_node->rap_root_node_objects-service_binding.
+        IF iv_name = root_node->rap_root_node_objects-service_binding.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'SMBC'.
-        IF Iv_name = root_node->manage_business_config_names-identifier.
+        IF iv_name = root_node->manage_business_config_names-identifier.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
     ENDCASE.
 
     CASE iv_type.
       WHEN 'DDLS' .
-        IF Iv_name = root_node->rap_node_objects-cds_view_r OR
+        IF iv_name = root_node->rap_node_objects-cds_view_r OR
            iv_name = root_node->rap_node_objects-cds_view_p.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'DDLX'.
-        IF Iv_name = root_node->rap_node_objects-meta_data_extension.
+        IF iv_name = root_node->rap_node_objects-meta_data_extension.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'STRU'.
-        IF Iv_name = root_node->rap_node_objects-control_structure.
+        IF iv_name = root_node->rap_node_objects-control_structure.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'CLAS'.
-        IF Iv_name = root_node->rap_node_objects-behavior_implementation.
+        IF iv_name = root_node->rap_node_objects-behavior_implementation.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
       WHEN 'TABL'.
-        IF Iv_name = root_node->draft_table_name.
+        IF iv_name = root_node->draft_table_name.
           rv_repo_obj_name_is_used_in_bo = abap_true.
         ENDIF.
     ENDCASE.
@@ -5563,24 +5580,24 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
 
       CASE iv_type.
         WHEN 'DDLS' .
-          IF Iv_name = lo_bo_node->rap_node_objects-cds_view_r OR
+          IF iv_name = lo_bo_node->rap_node_objects-cds_view_r OR
              iv_name = lo_bo_node->rap_node_objects-cds_view_p.
             rv_repo_obj_name_is_used_in_bo = abap_true.
           ENDIF.
         WHEN 'DDLX'.
-          IF Iv_name = lo_bo_node->rap_node_objects-meta_data_extension.
+          IF iv_name = lo_bo_node->rap_node_objects-meta_data_extension.
             rv_repo_obj_name_is_used_in_bo = abap_true.
           ENDIF.
         WHEN 'STRU'.
-          IF Iv_name = lo_bo_node->rap_node_objects-control_structure.
+          IF iv_name = lo_bo_node->rap_node_objects-control_structure.
             rv_repo_obj_name_is_used_in_bo = abap_true.
           ENDIF.
         WHEN 'CLAS'.
-          IF Iv_name = lo_bo_node->rap_node_objects-behavior_implementation.
+          IF iv_name = lo_bo_node->rap_node_objects-behavior_implementation.
             rv_repo_obj_name_is_used_in_bo = abap_true.
           ENDIF.
         WHEN 'TABL'.
-          IF Iv_name = lo_bo_node->draft_table_name.
+          IF iv_name = lo_bo_node->draft_table_name.
             rv_repo_obj_name_is_used_in_bo = abap_true.
           ENDIF.
       ENDCASE.

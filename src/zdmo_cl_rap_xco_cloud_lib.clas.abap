@@ -1,4 +1,4 @@
-CLASS zdmo_cl_rap_xco_cloud_lib DEFINITION INHERITING FROM ZDMO_cl_rap_xco_lib
+CLASS zdmo_cl_rap_xco_cloud_lib DEFINITION INHERITING FROM zdmo_cl_rap_xco_lib
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -29,7 +29,7 @@ ENDCLASS.
 
 
 
-CLASS ZDMO_CL_RAP_XCO_CLOUD_LIB IMPLEMENTATION.
+CLASS zdmo_cl_rap_xco_cloud_lib IMPLEMENTATION.
 
 
   METHOD  get_aggregated_annotations.
@@ -98,7 +98,19 @@ CLASS ZDMO_CL_RAP_XCO_CLOUD_LIB IMPLEMENTATION.
 
 
   METHOD get_abstract_entity.
-    ro_abstract_entity = xco_cp_cds=>abstract_entity( iv_name ).
+*    ro_abstract_entity = xco_cp_cds=>abstract_entity( iv_name ).
+
+    IF method_exists_in_class(
+         class_name  = 'xco_cp_cds'
+         method_name = 'abstract_entity'
+       ).
+      CALL METHOD xco_cp_cds=>('abstract_entity')
+        EXPORTING
+          iv_name            = iv_name
+        RECEIVING
+          ro_abstract_entity = ro_abstract_entity.
+    ENDIF.
+
   ENDMETHOD.
 
 
@@ -144,7 +156,7 @@ CLASS ZDMO_CL_RAP_XCO_CLOUD_LIB IMPLEMENTATION.
 
   METHOD get_packages.
     IF it_filters IS NOT INITIAL.
-      rt_packages =  xco_cp_abap_repository=>objects->devc->where( it_Filters
+      rt_packages =  xco_cp_abap_repository=>objects->devc->where( it_filters
 *       VALUE #(
 *                                              ( io_filter )
 *                                              )

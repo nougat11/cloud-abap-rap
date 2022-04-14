@@ -9,16 +9,16 @@ CLASS lhc_rapgeneratorbo DEFINITION INHERITING FROM cl_abap_behavior_handler.
         IMPORTING keys FOR rapgeneratorbo~setnamespace,
       setobjectnames FOR DETERMINE ON MODIFY
         IMPORTING keys FOR rapgeneratorbo~setobjectnames,
-      setfieldnames FOR DETERMINE ON MODIFY
-        IMPORTING keys FOR rapgeneratorbo~setfieldnames,
+*      setfieldnames FOR DETERMINE ON MODIFY
+*        IMPORTING keys FOR rapgeneratorbo~setfieldnames,
       createboandrootnode FOR MODIFY
         IMPORTING keys FOR ACTION rapgeneratorbo~createboandrootnode RESULT result,
       allowed_combinations FOR VALIDATE ON SAVE
         IMPORTING keys FOR rapgeneratorbo~allowed_combinations,
 *     Methods that are not supported for 2020
-      get_global_authorizations FOR GLOBAL AUTHORIZATION
-        IMPORTING REQUEST requested_authorizations FOR rapgeneratorbo
-        RESULT result,
+*      get_global_authorizations FOR GLOBAL AUTHORIZATION
+*        IMPORTING REQUEST requested_authorizations FOR rapgeneratorbo
+*        RESULT result,
       mandatory_fields_check FOR VALIDATE ON SAVE
         IMPORTING keys FOR rapgeneratorbo~mandatory_fields_check,
       createjsonstring FOR DETERMINE ON SAVE
@@ -28,11 +28,85 @@ ENDCLASS.
 
 CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
-  METHOD get_global_authorizations.
-  ENDMETHOD.
+*  METHOD get_global_authorizations.
+*  ENDMETHOD.
 
   METHOD mandatory_fields_check.
- 
+
+*    DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdmo_c_rapgeneratorbo.
+*
+*    DATA reported_rapgeneratorbo_line LIKE LINE OF reported-rapgeneratorbo.
+*
+*    DATA(description_permission_request) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_data_ref( REF #( permission_request-%field ) ) ).
+*    DATA(components_permission_request) = description_permission_request->get_components(  ).
+*
+*    LOOP AT components_permission_request INTO DATA(component_permission_request).
+*      permission_request-%field-(component_permission_request-name) = if_abap_behv=>mk-on.
+*    ENDLOOP.
+*
+**    " Get Permissions without instance keys, as we are only interested in static / global feature control ( mandatory )
+**    GET PERMISSIONS OF  zdmo_c_rapgeneratorbo
+**      ENTITY rapgeneratorbo
+**      FROM VALUE #(  )
+**        REQUEST permission_request
+**        RESULT DATA(permission_result)
+**        FAILED DATA(failed_permission_result)
+**        REPORTED DATA(reported_permission_result).
+*
+*    " Get current field values
+*    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*    ENTITY rapgeneratorbo
+*      ALL FIELDS
+*      WITH CORRESPONDING #( keys )
+*      RESULT DATA(rap_generator_projects).
+*
+*    "Do check
+*    LOOP AT rap_generator_projects INTO DATA(rap_generator_project).
+*
+*      GET PERMISSIONS ONLY INSTANCE ENTITY zdmo_c_rapgeneratorbo
+*                FROM VALUE #( ( RapNodeUUID = rap_generator_project-RapNodeUUID ) )
+*                REQUEST permission_request
+*                RESULT DATA(permission_result)
+*                FAILED DATA(failed_permission_result)
+*                REPORTED DATA(reported_permission_result).
+*
+*
+*      LOOP AT components_permission_request INTO component_permission_request.
+*
+*        IF permission_result-global-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory
+*                                AND rap_generator_project-(component_permission_request-name) IS INITIAL.
+*
+*          APPEND VALUE #( %tky = rap_generator_project-%tky ) TO failed-rapgeneratorbo.
+*
+*          "since %element-(component_permission_request-name) = if_abap_behv=>mk-on could not be added using a VALUE statement
+*          "add the value via assigning value to the field of a structure
+*
+*          CLEAR reported_rapgeneratorbo_line.
+*          reported_rapgeneratorbo_line-%tky = rap_generator_project-%tky.
+*          reported_rapgeneratorbo_line-%element-(component_permission_request-name) = if_abap_behv=>mk-on.
+*          reported_rapgeneratorbo_line-%msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
+*                                                           number   = 071
+*                                                           severity = if_abap_behv_message=>severity-error
+*                                                           v1       = |{ component_permission_request-name }|
+*                                                           v2 = |{ rap_generator_project-BoName }| ).
+*          APPEND reported_rapgeneratorbo_line  TO reported-rapgeneratorbo.
+*
+**          APPEND VALUE #( %tky = entity-%tky
+***                   %element-(component_permission_request-name) = if_abap_behv=>mk-on
+**                    %msg = new_message(
+**                            id       = 'ZDMO_CM_RAP_GEN_MSG'
+**                            number   = 013
+**                            severity = if_abap_behv_message=>severity-error
+**                            v1       = |{ component_permission_request-name }| )
+**                           )
+**          TO reported-rapgeneratorbo.
+*
+*        ENDIF.
+*      ENDLOOP.
+*
+*    ENDLOOP.
+*
+
   ENDMETHOD.
 
 
@@ -97,7 +171,7 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
     LOOP AT rapbos INTO rapbo.
       "set a flag to check in the save sequence that a job is to be scheduled
-      update_line-BoIsGenerated = abap_true.
+      update_line-boisgenerated = abap_true.
       update_line-%tky      = rapbo-%tky.
       APPEND update_line TO update.
     ENDLOOP.
@@ -106,7 +180,7 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
     MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
     ENTITY rapgeneratorbo
       UPDATE FIELDS (
-                      BoIsGenerated
+                      boisgenerated
                       ) WITH update
     REPORTED reported
     FAILED failed
@@ -221,19 +295,19 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
                                                            rapbo-jobname IS INITIAL
                                                       THEN if_abap_behv=>fc-o-enabled
                                                       ELSE if_abap_behv=>fc-o-disabled )
-                      %field-MultiInlineEdit  = COND #( WHEN rapbo-ImplementationType = zdmo_cl_rap_node=>implementation_type-managed_semantic
-                                                         AND rapbo-DataSourceType = zdmo_cl_rap_node=>data_source_types-table
-                                                         AND rapbo-DraftEnabled = abap_true
-                                                         AND rapbo-BindingType = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
+                      %field-multiinlineedit  = COND #( WHEN rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_semantic
+                                                         AND rapbo-datasourcetype = zdmo_cl_rap_node=>data_source_types-table
+                                                         AND rapbo-draftenabled = abap_true
+                                                         AND rapbo-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
                                                         THEN if_abap_behv=>fc-f-unrestricted
                                                         ELSE if_abap_behv=>fc-f-read_only )
-                      %field-CustomizingTable = COND #( WHEN rapbo-ImplementationType = zdmo_cl_rap_node=>implementation_type-managed_semantic
-                                                         AND rapbo-DataSourceType = zdmo_cl_rap_node=>data_source_types-table
-                                                         AND rapbo-DraftEnabled = abap_true
-                                                         AND rapbo-BindingType = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
+                      %field-customizingtable = COND #( WHEN rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_semantic
+                                                         AND rapbo-datasourcetype = zdmo_cl_rap_node=>data_source_types-table
+                                                         AND rapbo-draftenabled = abap_true
+                                                         AND rapbo-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
                                                         THEN if_abap_behv=>fc-f-unrestricted
                                                         ELSE if_abap_behv=>fc-f-read_only )
-                      %field-AddToManageBusinessConfig  = COND #( WHEN rapbo-BindingType = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
+                      %field-addtomanagebusinessconfig  = COND #( WHEN rapbo-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
                                                                   THEN if_abap_behv=>fc-f-unrestricted
                                                                   ELSE if_abap_behv=>fc-f-read_only )
 
@@ -263,31 +337,7 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
               ENTITY rapgeneratorbonode
                 EXECUTE setrepoobjectnames
                   FROM VALUE #( ( %tky = rapbo_node-%tky ) ).
-      ENDLOOP.
-
-    ENDLOOP.
-
-
-
-  ENDMETHOD.
-
-  METHOD setfieldnames.
-
-    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-       ENTITY rapgeneratorbo
-       ALL FIELDS
-       WITH CORRESPONDING #( keys )
-       RESULT DATA(rapbos).
-
-    LOOP AT rapbos INTO DATA(rapbo).
-      CHECK rapbo-packagename IS NOT INITIAL.
-      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-              ENTITY rapgeneratorbo BY \_rapgeneratorbonode
-              ALL  FIELDS
-              WITH VALUE #( ( %tky = rapbo-%tky ) )
-              RESULT DATA(rapbo_nodes).
-
-      LOOP AT rapbo_nodes INTO DATA(rapbo_node).
+        "additional modify statement
         MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
               ENTITY rapgeneratorbonode
                 EXECUTE setrepofieldnames
@@ -296,8 +346,9 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
     ENDLOOP.
 
-
   ENDMETHOD.
+
+
 
   METHOD createboandrootnode.
 
@@ -388,78 +439,78 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
     LOOP AT entities INTO DATA(entity).
 
-      IF entity-DataSourceType = zdmo_cl_rap_node=>data_source_types-abstract_entity AND
-         ( entity-BindingType = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
-           entity-BindingType = zdmo_cl_rap_node=>binding_type_name-odata_v4_web_api ) .
+      IF entity-datasourcetype = zdmo_cl_rap_node=>data_source_types-abstract_entity AND
+         ( entity-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
+           entity-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_web_api ) .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 063
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-BoName }| ) )
+                                            v1       = |{ entity-boname }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
-      IF entity-DataSourceType = zdmo_cl_rap_node=>data_source_types-abstract_entity AND
-         entity-DraftEnabled = abap_true .
+      IF entity-datasourcetype = zdmo_cl_rap_node=>data_source_types-abstract_entity AND
+         entity-draftenabled = abap_true .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 072
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-BoName }| ) )
+                                            v1       = |{ entity-boname }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
-      IF ( entity-MultiInlineEdit = abap_true OR entity-CustomizingTable = abap_true ) AND
-         entity-DataSourceType <> zdmo_cl_rap_node=>data_source_types-table .
+      IF ( entity-multiinlineedit = abap_true OR entity-customizingtable = abap_true ) AND
+         entity-datasourcetype <> zdmo_cl_rap_node=>data_source_types-table .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 067
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-DataSourceType }| ) )
+                                            v1       = |{ entity-datasourcetype }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
-      IF ( entity-MultiInlineEdit = abap_true OR entity-CustomizingTable = abap_true ) AND
-         entity-ImplementationType <> zdmo_cl_rap_node=>implementation_type-managed_semantic .
+      IF ( entity-multiinlineedit = abap_true OR entity-customizingtable = abap_true ) AND
+         entity-implementationtype <> zdmo_cl_rap_node=>implementation_type-managed_semantic .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 068
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-ImplementationType }| ) )
+                                            v1       = |{ entity-implementationtype }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
-      IF entity-MultiInlineEdit = abap_true AND
-         ( entity-BindingType <> zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
-           entity-DraftEnabled = abap_false ) .
+      IF entity-multiinlineedit = abap_true AND
+         ( entity-bindingtype <> zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
+           entity-draftenabled = abap_false ) .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 058
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-BoName }| ) )
+                                            v1       = |{ entity-boname }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
-      IF entity-CustomizingTable = abap_true AND
-         ( entity-BindingType <> zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
-           entity-DraftEnabled = abap_false ) .
+      IF entity-customizingtable = abap_true AND
+         ( entity-bindingtype <> zdmo_cl_rap_node=>binding_type_name-odata_v4_ui OR
+           entity-draftenabled = abap_false ) .
         APPEND VALUE #( %tky = entity-%tky )
                TO failed-rapgeneratorbo.
         APPEND VALUE #( %tky = entity-%tky
                         %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                             number   = 059
                                             severity = if_abap_behv_message=>severity-error
-                                            v1       = |{ entity-BoName }| ) )
+                                            v1       = |{ entity-boname }| ) )
                TO reported-rapgeneratorbo.
       ENDIF.
 
@@ -467,7 +518,7 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD createJsonString.
+  METHOD createjsonstring.
 
     DATA json_string_builder TYPE REF TO zdmo_cl_rap_gen_build_json.
     DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbo.
@@ -546,8 +597,8 @@ CLASS lsc_zdmo_i_rapgeneratorbo IMPLEMENTATION.
     DATA lv_jobcount TYPE cl_apj_rt_api=>ty_jobcount.
 
     LOOP AT update-rapgeneratorbo INTO DATA(update_rapgeneratorbo)
-            WHERE BoIsGenerated = abap_true AND
-                  %control-BoIsGenerated = if_abap_behv=>mk-on.
+            WHERE boisgenerated = abap_true AND
+                  %control-boisgenerated = if_abap_behv=>mk-on.
 
       " ls_start_info-start_immediately MUST NOT BE USED
       " since it performs a commit work which would cause a dump

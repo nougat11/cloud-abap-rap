@@ -630,69 +630,69 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 
 **********************************************************************
 ** Begin of deletion 2020
-**********************************************************************
-    xco_api->todo( 'in create bdef. make sure is_customizing_table is false on premise' ).
-
-    IF io_rap_bo_node->is_customizing_table = abap_true AND io_rap_bo_node->is_virtual_root( ) = abap_false.
-      " if_xco_gen_bdef_s_fo_b_validtn
-      lv_validation_name = |validateChanges| .
-
-      DATA(validation) = lo_header_behavior->add_validation( CONV #( lv_validation_name ) ).
-      validation->set_time( xco_cp_behavior_definition=>evaluation->time->on_save ).
-
-      method_exists_in_interface-interface_name = 'if_xco_gen_bdef_s_fo_b_validtn'.
-      method_exists_in_interface-method_name    = 'SET_TRIGGER_OPERATIONS'.
-      IF xco_api->method_exists_in_interface(
-                  interface_name = method_exists_in_interface-interface_name
-                  method_name    = method_exists_in_interface-method_name
-                ).
-        DATA  trigger_operations  TYPE sxco_t_bdef_trigger_operations  .
-        " DATA  trigger_operations_class TYPE REF TO cl_xco_bdef_eval_trigger_op_f.
-
-        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('CREATE') TO <fs_create>.
-        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('UPDATE') TO <fs_update>.
-        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('DELETE') TO <fs_delete>.
-
-        IF <fs_create> IS ASSIGNED.
-          APPEND <fs_create> TO trigger_operations.
-        ENDIF.
-        IF <fs_update> IS ASSIGNED.
-          APPEND <fs_update> TO trigger_operations.
-        ENDIF.
-        IF <fs_delete> IS ASSIGNED.
-          APPEND <fs_delete> TO trigger_operations.
-        ENDIF.
-
-* @todo: dynamic call currently fails
-*        CALL METHOD validation->('SET_TRIGGER_OPERATIONS')
-*          IMPORTING
-*            it_trigger_operations = trigger_operations.
-
-        validation->set_trigger_operations( trigger_operations  ).
-
-        method_exists_in_interface-method_exists = abap_true.
-      ELSE.
-        method_exists_in_interface-method_exists = abap_false.
-      ENDIF.
-      APPEND method_exists_in_interface TO method_exists_in_interfaces.
-
-    ENDIF.
-
-    IF io_rap_bo_node->is_virtual_root(  ) = abap_true.
-      "action ( features : instance ) selectTransport parameter D_SelectCustomizingTransptReqP result [1] $self;
-      lv_action_name = 'selectTransport'.
-      DATA(action) = lo_header_behavior->add_action( CONV #( lv_action_name ) ).
-      action->set_features_instance( ).
-      action->parameter->set_entity( 'D_SelectCustomizingTransptReqP' ).
-      action->result->set_cardinality( xco_cp_cds=>cardinality->one )->set_self(  ).
-    ENDIF.
-
-
-
-
-
-
-**********************************************************************
+***********************************************************************
+*    xco_api->todo( 'in create bdef. make sure is_customizing_table is false on premise' ).
+*
+*    IF io_rap_bo_node->is_customizing_table = abap_true AND io_rap_bo_node->is_virtual_root( ) = abap_false.
+*      " if_xco_gen_bdef_s_fo_b_validtn
+*      lv_validation_name = |validateChanges| .
+*
+*      DATA(validation) = lo_header_behavior->add_validation( CONV #( lv_validation_name ) ).
+*      validation->set_time( xco_cp_behavior_definition=>evaluation->time->on_save ).
+*
+*      method_exists_in_interface-interface_name = 'if_xco_gen_bdef_s_fo_b_validtn'.
+*      method_exists_in_interface-method_name    = 'SET_TRIGGER_OPERATIONS'.
+*      IF xco_api->method_exists_in_interface(
+*                  interface_name = method_exists_in_interface-interface_name
+*                  method_name    = method_exists_in_interface-method_name
+*                ).
+*        DATA  trigger_operations  TYPE sxco_t_bdef_trigger_operations  .
+*        " DATA  trigger_operations_class TYPE REF TO cl_xco_bdef_eval_trigger_op_f.
+*
+*        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('CREATE') TO <fs_create>.
+*        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('UPDATE') TO <fs_update>.
+*        ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('DELETE') TO <fs_delete>.
+*
+*        IF <fs_create> IS ASSIGNED.
+*          APPEND <fs_create> TO trigger_operations.
+*        ENDIF.
+*        IF <fs_update> IS ASSIGNED.
+*          APPEND <fs_update> TO trigger_operations.
+*        ENDIF.
+*        IF <fs_delete> IS ASSIGNED.
+*          APPEND <fs_delete> TO trigger_operations.
+*        ENDIF.
+*
+** @todo: dynamic call currently fails
+**        CALL METHOD validation->('SET_TRIGGER_OPERATIONS')
+**          IMPORTING
+**            it_trigger_operations = trigger_operations.
+*
+*        validation->set_trigger_operations( trigger_operations  ).
+*
+*        method_exists_in_interface-method_exists = abap_true.
+*      ELSE.
+*        method_exists_in_interface-method_exists = abap_false.
+*      ENDIF.
+*      APPEND method_exists_in_interface TO method_exists_in_interfaces.
+*
+*    ENDIF.
+*
+*    IF io_rap_bo_node->is_virtual_root(  ) = abap_true.
+*      "action ( features : instance ) selectTransport parameter D_SelectCustomizingTransptReqP result [1] $self;
+*      lv_action_name = 'selectTransport'.
+*      DATA(action) = lo_header_behavior->add_action( CONV #( lv_action_name ) ).
+*      action->set_features_instance( ).
+*      action->parameter->set_entity( 'D_SelectCustomizingTransptReqP' ).
+*      action->result->set_cardinality( xco_cp_cds=>cardinality->one )->set_self(  ).
+*    ENDIF.
+*
+*
+*
+*
+*
+*
+***********************************************************************
 ** End of deletion 2020
 **********************************************************************
 
@@ -975,46 +975,46 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Begin of deletion 2020
 **********************************************************************
-        IF io_rap_bo_node->is_customizing_table = abap_true.
-
-          lv_validation_name = |val_transport| .
-
-          DATA(item_validation) = lo_item_behavior->add_validation( CONV #( lv_validation_name ) ).
-          "'val_transport'
-          item_validation->set_time( xco_cp_behavior_definition=>evaluation->time->on_save ).
-
-*          trigger_operations = VALUE #(
-*                                        ( xco_cp_behavior_definition=>evaluation->trigger_operation->create )
-*                                        ( xco_cp_behavior_definition=>evaluation->trigger_operation->update )
-*                                        "( xco_cp_behavior_definition=>evaluation->trigger_operation->delete )
-*                                       ).
-
-          CLEAR trigger_operations.
-          ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('CREATE') TO <fs_create>.
-          ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('UPDATE') TO <fs_update>.
-
-
-          IF <fs_create> IS ASSIGNED.
-            APPEND <fs_create> TO trigger_operations.
-          ENDIF.
-          IF <fs_update> IS ASSIGNED.
-            APPEND <fs_update> TO trigger_operations.
-          ENDIF.
-
-          IF xco_api->method_exists_in_interface(
-            interface_name = 'if_xco_gen_bdef_s_fo_b_validtn'
-            method_name    = 'SET_TRIGGER_OPERATIONS'
-          ).
-
-* todo: dynamic call currently fails
-*              CALL METHOD item_validation->('SET_TRIGGER_OPERATIONS')
-*                IMPORTING
-*                  it_trigger_operations = trigger_operations.
-
-            item_validation->set_trigger_operations( trigger_operations  ).
-
-          ENDIF.
-        ENDIF.
+*        IF io_rap_bo_node->is_customizing_table = abap_true.
+*
+*          lv_validation_name = |val_transport| .
+*
+*          DATA(item_validation) = lo_item_behavior->add_validation( CONV #( lv_validation_name ) ).
+*          "'val_transport'
+*          item_validation->set_time( xco_cp_behavior_definition=>evaluation->time->on_save ).
+*
+**          trigger_operations = VALUE #(
+**                                        ( xco_cp_behavior_definition=>evaluation->trigger_operation->create )
+**                                        ( xco_cp_behavior_definition=>evaluation->trigger_operation->update )
+**                                        "( xco_cp_behavior_definition=>evaluation->trigger_operation->delete )
+**                                       ).
+*
+*          CLEAR trigger_operations.
+*          ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('CREATE') TO <fs_create>.
+*          ASSIGN xco_cp_behavior_definition=>evaluation->trigger_operation->('UPDATE') TO <fs_update>.
+*
+*
+*          IF <fs_create> IS ASSIGNED.
+*            APPEND <fs_create> TO trigger_operations.
+*          ENDIF.
+*          IF <fs_update> IS ASSIGNED.
+*            APPEND <fs_update> TO trigger_operations.
+*          ENDIF.
+*
+*          IF xco_api->method_exists_in_interface(
+*            interface_name = 'if_xco_gen_bdef_s_fo_b_validtn'
+*            method_name    = 'SET_TRIGGER_OPERATIONS'
+*          ).
+*
+** todo: dynamic call currently fails
+**              CALL METHOD item_validation->('SET_TRIGGER_OPERATIONS')
+**                IMPORTING
+**                  it_trigger_operations = trigger_operations.
+*
+*            item_validation->set_trigger_operations( trigger_operations  ).
+*
+*          ENDIF.
+*        ENDIF.
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************
@@ -1733,7 +1733,7 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Begin of deletion 2020
 **********************************************************************
-    lo_specification->add_include( )->set_structure( iv_structure = CONV #( to_upper( 'sych_bdl_draft_admin_inc' ) )  )->set_group_name( to_upper( '%admin' )  ).
+*    lo_specification->add_include( )->set_structure( iv_structure = CONV #( to_upper( 'sych_bdl_draft_admin_inc' ) )  )->set_group_name( to_upper( '%admin' )  ).
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************
@@ -2389,45 +2389,45 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Begin of deletion 2020
 **********************************************************************
-    DATA lv_service_binding_name TYPE sxco_srvb_object_name.
-    lv_service_binding_name = to_upper( io_rap_bo_node->root_node->rap_root_node_objects-service_binding ).
-
-    "add object name and type to list of generated repository objects
-    CLEAR generated_repository_object.
-    generated_repository_object-object_name = lv_service_binding_name.
-    generated_repository_object-object_type = 'SRVB'.
-    APPEND generated_repository_object TO generated_repository_objects.
-
-    DATA lv_service_definition_name TYPE sxco_srvd_object_name.
-    lv_service_definition_name = to_upper( io_rap_bo_node->root_node->rap_root_node_objects-service_definition ).
-
-    DATA(lo_specification_header) = mo_srvb_put_operation->for-srvb->add_object(   lv_service_binding_name
-                                    )->set_package( mo_package
-                                    )->create_form_specification( ).
-
-    lo_specification_header->set_short_description( |Service binding for { io_rap_bo_node->root_node->entityname }| ) ##no_text.
-
-
-    CASE io_rap_bo_node->root_node->binding_type.
-      WHEN io_rap_bo_node->binding_type_name-odata_v4_ui.
-        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v4_ui ).
-      WHEN io_rap_bo_node->binding_type_name-odata_v2_ui.
-        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_ui ).
-      WHEN io_rap_bo_node->binding_type_name-odata_v4_web_api.
-        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v4_web_api ).
-      WHEN io_rap_bo_node->binding_type_name-odata_v2_web_api..
-        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_web_api ).
-      WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
-          EXPORTING
-            textid     = ZDMO_cx_rap_generator=>invalid_binding_type
-            mv_value   = io_rap_bo_node->root_node->binding_type
-            mv_value_2 = io_rap_bo_node->supported_binding_types.
-    ENDCASE.
-
-
-    lo_specification_header->add_service( )->add_version( '0001' )->set_service_definition( lv_service_definition_name ).
-
+*    DATA lv_service_binding_name TYPE sxco_srvb_object_name.
+*    lv_service_binding_name = to_upper( io_rap_bo_node->root_node->rap_root_node_objects-service_binding ).
+*
+*    "add object name and type to list of generated repository objects
+*    CLEAR generated_repository_object.
+*    generated_repository_object-object_name = lv_service_binding_name.
+*    generated_repository_object-object_type = 'SRVB'.
+*    APPEND generated_repository_object TO generated_repository_objects.
+*
+*    DATA lv_service_definition_name TYPE sxco_srvd_object_name.
+*    lv_service_definition_name = to_upper( io_rap_bo_node->root_node->rap_root_node_objects-service_definition ).
+*
+*    DATA(lo_specification_header) = mo_srvb_put_operation->for-srvb->add_object(   lv_service_binding_name
+*                                    )->set_package( mo_package
+*                                    )->create_form_specification( ).
+*
+*    lo_specification_header->set_short_description( |Service binding for { io_rap_bo_node->root_node->entityname }| ) ##no_text.
+*
+*
+*    CASE io_rap_bo_node->root_node->binding_type.
+*      WHEN io_rap_bo_node->binding_type_name-odata_v4_ui.
+*        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v4_ui ).
+*      WHEN io_rap_bo_node->binding_type_name-odata_v2_ui.
+*        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_ui ).
+*      WHEN io_rap_bo_node->binding_type_name-odata_v4_web_api.
+*        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v4_web_api ).
+*      WHEN io_rap_bo_node->binding_type_name-odata_v2_web_api..
+*        lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_web_api ).
+*      WHEN OTHERS.
+*        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+*          EXPORTING
+*            textid     = ZDMO_cx_rap_generator=>invalid_binding_type
+*            mv_value   = io_rap_bo_node->root_node->binding_type
+*            mv_value_2 = io_rap_bo_node->supported_binding_types.
+*    ENDCASE.
+*
+*
+*    lo_specification_header->add_service( )->add_version( '0001' )->set_service_definition( lv_service_definition_name ).
+*
 
 **********************************************************************
 ** End of deletion 2020
@@ -2609,14 +2609,14 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Begin of insertion 2020
 **********************************************************************
-            lo_result = mo_draft_tabl_put_opertion->execute( VALUE #( ( xco_cp_generation=>put_operation_option->skip_activation ) ) ).
+*            lo_result = mo_draft_tabl_put_opertion->execute( VALUE #( ( xco_cp_generation=>put_operation_option->skip_activation ) ) ).
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************
 **********************************************************************
 ** Begin of insertion 2020
 **********************************************************************
-*        lo_result = mo_draft_tabl_put_opertion->execute(  ).
+        lo_result = mo_draft_tabl_put_opertion->execute(  ).
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
@@ -2711,14 +2711,14 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Start of deletion 2020
 **********************************************************************
-          lo_result = mo_put_operation->execute( VALUE #( ( xco_cp_generation=>put_operation_option->skip_activation ) ) ).
+*          lo_result = mo_put_operation->execute( VALUE #( ( xco_cp_generation=>put_operation_option->skip_activation ) ) ).
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
-*      lo_result = mo_put_operation->execute(  ).
+      lo_result = mo_put_operation->execute(  ).
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
@@ -2782,62 +2782,62 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 
 **********************************************************************
 ** Begin of deletion 2020
-**********************************************************************
-
-
-        IF root_node->manage_business_configuration = abap_true AND root_node->skip_activation = abap_false.
-
-          CLEAR framework_message.
-          framework_message-message = 'Messages from business configuration registration'.
-          framework_message-severity = 'I'.
-          APPEND framework_message TO framework_messages.
-
-
-          DATA(lo_business_configuration) = mbc_cp_api=>business_configuration(
-            iv_identifier =  root_node->manage_business_config_names-identifier
-            iv_namespace  = root_node->manage_business_config_names-namespace
-          ).
-
-          lo_business_configuration->create(
-            iv_name            = root_node->manage_business_config_names-name
-            iv_description     = root_node->manage_business_config_names-description
-**********************************************************************
-** Begin of deletion 2020
-**********************************************************************
-            iv_service_binding = CONV #( to_upper( root_node->rap_root_node_objects-service_binding ) )
-**********************************************************************
-** End of deletion 2020
-**********************************************************************
-            iv_service_name    = CONV #( to_upper( root_node->rap_root_node_objects-service_binding ) )
-
-            iv_service_version = 0001
-            iv_root_entity_set = root_node->entityname
-            iv_transport       = CONV #( mo_transport )
-**********************************************************************
-** Begin of deletion 2020
-**********************************************************************
-            iv_skip_root_entity_list_rep = root_node->is_virtual_root(  )
-**********************************************************************
-** End of deletion 2020
-**********************************************************************
-          ).
-          CLEAR framework_message.
-          framework_message-severity = 'S'.
-          framework_message-message = |{ root_node->manage_business_config_names-identifier } registered successfully.| .
-          APPEND framework_message TO  framework_messages.
-
-        ENDIF.
-
-      CATCH cx_mbc_api_exception INTO DATA(lx_mbc_api_exception).
-        put_exception_occured = abap_true.
-        DATA(lt_messages) = lx_mbc_api_exception->if_xco_news~get_messages( ).
-
-        CLEAR framework_message.
-        LOOP AT lt_messages INTO DATA(lo_message).
-          framework_message-severity = lo_message->value-msgty.
-          framework_message-message =  lo_message->get_text( ).
-          APPEND framework_message TO framework_messages.
-        ENDLOOP.
+***********************************************************************
+*
+*
+*        IF root_node->manage_business_configuration = abap_true AND root_node->skip_activation = abap_false.
+*
+*          CLEAR framework_message.
+*          framework_message-message = 'Messages from business configuration registration'.
+*          framework_message-severity = 'I'.
+*          APPEND framework_message TO framework_messages.
+*
+*
+*          DATA(lo_business_configuration) = mbc_cp_api=>business_configuration(
+*            iv_identifier =  root_node->manage_business_config_names-identifier
+*            iv_namespace  = root_node->manage_business_config_names-namespace
+*          ).
+*
+*          lo_business_configuration->create(
+*            iv_name            = root_node->manage_business_config_names-name
+*            iv_description     = root_node->manage_business_config_names-description
+***********************************************************************
+*** Begin of deletion 2020
+***********************************************************************
+**            iv_service_binding = CONV #( to_upper( root_node->rap_root_node_objects-service_binding ) )
+***********************************************************************
+*** End of deletion 2020
+***********************************************************************
+*            iv_service_name    = CONV #( to_upper( root_node->rap_root_node_objects-service_binding ) )
+*
+*            iv_service_version = 0001
+*            iv_root_entity_set = root_node->entityname
+*            iv_transport       = CONV #( mo_transport )
+***********************************************************************
+*** Begin of deletion 2020
+***********************************************************************
+**            iv_skip_root_entity_list_rep = root_node->is_virtual_root(  )
+***********************************************************************
+*** End of deletion 2020
+***********************************************************************
+*          ).
+*          CLEAR framework_message.
+*          framework_message-severity = 'S'.
+*          framework_message-message = |{ root_node->manage_business_config_names-identifier } registered successfully.| .
+*          APPEND framework_message TO  framework_messages.
+*
+*        ENDIF.
+*
+*      CATCH cx_mbc_api_exception INTO DATA(lx_mbc_api_exception).
+*        put_exception_occured = abap_true.
+*        DATA(lt_messages) = lx_mbc_api_exception->if_xco_news~get_messages( ).
+*
+*        CLEAR framework_message.
+*        LOOP AT lt_messages INTO DATA(lo_message).
+*          framework_message-severity = lo_message->value-msgty.
+*          framework_message-message =  lo_message->get_text( ).
+*          APPEND framework_message TO framework_messages.
+*        ENDLOOP.
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************
@@ -2879,263 +2879,263 @@ CLASS zdmo_cl_rap_generator IMPLEMENTATION.
 **********************************************************************
 ** Begin of deletion 2020
 **********************************************************************
-    DATA ls_condition_components TYPE ts_condition_components.
-    DATA lt_condition_components TYPE tt_condition_components.
-    DATA lo_field TYPE REF TO if_xco_gen_ddls_s_fo_field .
-    DATA pos TYPE i.
-
-    DATA(lo_specification) = mo_put_operation->for-ddls->add_object( io_rap_bo_node->rap_node_objects-custom_entity
-     )->set_package( mo_package
-     )->create_form_specification( ).
-
-    "add object name and type to list of generated repository objects
-    CLEAR generated_repository_object.
-    generated_repository_object-object_name = io_rap_bo_node->rap_node_objects-custom_entity.
-    generated_repository_object-object_type = 'DDLS'.
-    APPEND generated_repository_object TO generated_repository_objects.
-
-    "create a custom entity
-    DATA(lo_view) = lo_specification->set_short_description( |CDS View for { io_rap_bo_node->rap_node_objects-alias  }|
-      )->add_custom_entity( ) ##no_text.
-
-    " Annotations can be added to custom entities.
-    lo_view->add_annotation( 'ObjectModel.query.implementedBy' )->value->build( )->add_string( |ABAP:{ io_rap_bo_node->rap_node_objects-custom_query_impl_class }| ).
-
-    "@ObjectModel.query.implementedBy:'ABAP:ZDMO_CL_TRAVEL_UQ'
-
-    "in contrast to MDE the annotations are not added to the specification but to the view
-    add_annotation_ui_header(
-      EXPORTING
-        io_specification = lo_view
-        io_rap_bo_node = io_rap_bo_node
-    ).
-
-    IF io_rap_bo_node->is_root( ).
-      lo_view->set_root( ).
-    ELSE.
-
-      CASE io_rap_bo_node->get_implementation_type(  ) .
-
-        WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
-
-          CLEAR ls_condition_components.
-          CLEAR lt_condition_components.
-
-          LOOP AT io_rap_bo_node->parent_node->semantic_key INTO DATA(ls_semantic_key).
-            ls_condition_components-association_name = '_' && io_rap_bo_node->parent_node->rap_node_objects-alias.
-            ls_condition_components-association_field = ls_semantic_key-cds_view_field.
-            ls_condition_components-projection_field = ls_semantic_key-cds_view_field.
-            APPEND ls_condition_components TO lt_condition_components.
-          ENDLOOP.
-
-          DATA(lo_condition) = create_condition( lt_condition_components ).
-
-      ENDCASE.
-
-      lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && io_rap_bo_node->parent_node->rap_node_objects-alias ) ).
-      lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-custom_entity
-       " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
-        )->set_condition( lo_condition )->set_to_parent( ).
-
-      IF io_rap_bo_node->is_grand_child_or_deeper(  ).
-
-        CASE io_rap_bo_node->get_implementation_type(  ) .
-
-          WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
-
-            CLEAR ls_condition_components.
-            CLEAR lt_condition_components.
-
-            LOOP AT io_rap_bo_node->ROOT_node->semantic_key INTO DATA(ls_root_semantic_key).
-              ls_condition_components-association_name = '_' && io_rap_bo_node->root_node->rap_node_objects-alias.
-              ls_condition_components-association_field = ls_root_semantic_key-cds_view_field.
-              ls_condition_components-projection_field = ls_root_semantic_key-cds_view_field.
-              APPEND ls_condition_components TO lt_condition_components.
-            ENDLOOP.
-
-            lo_condition = create_condition( lt_condition_components ).
-
-        ENDCASE.
-
-        lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && io_rap_bo_node->root_node->rap_node_objects-alias ) ).
-        lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-custom_entity
-         " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
-          )->set_condition( lo_condition )->set_to_parent(  ).
-
-      ENDIF.
-
-    ENDIF.
-
-    " Data source.
-
-    IF io_rap_bo_node->has_childs(  ).   " create_item_objects(  ).
-      " Composition.
-
-      "change to a new property "childnodes" which only contains the direct childs
-      LOOP AT io_rap_bo_node->childnodes INTO DATA(lo_childnode).
-
-        " Sample field with composition:
-        lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && lo_childnode->rap_node_objects-alias  ) ).
-        lo_field->create_composition( lo_childnode->rap_node_objects-custom_entity
-       )->set_cardinality( xco_cp_cds=>cardinality->zero_to_n ).
-
-
-
-      ENDLOOP.
-
-    ENDIF.
-
-
-    "Client field does not need to be specified in client-specific CDS view
-
-    CLEAR pos.
-
-    LOOP AT io_rap_bo_node->lt_fields  INTO  DATA(ls_header_fields) WHERE  name  <> io_rap_bo_node->field_name-client . "   co_client.
-
-      pos += 10.
-
-      IF ls_header_fields-key_indicator = abap_true.
-        lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_header_fields-cds_view_field )
-           )->set_key( ). "->set_alias(  ls_header_fields-cds_view_field  ).
-      ELSE.
-        lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_header_fields-cds_view_field )
-           ). "->set_alias( ls_header_fields-cds_view_field ).
-      ENDIF.
-
-      IF ls_header_fields-is_data_element = abap_true.
-        lo_field->set_type( xco_cp_abap_dictionary=>data_element( ls_header_fields-data_element ) ).
-      ENDIF.
-      IF ls_header_fields-is_built_in_type = abAP_TRUE.
-        lo_field->set_type( xco_cp_abap_dictionary=>built_in_type->for(
-                                        iv_type     =  ls_header_fields-built_in_type
-                                        iv_length   = ls_header_fields-built_in_type_length
-                                        iv_decimals = ls_header_fields-built_in_type_decimals
-                                        ) ).
-      ENDIF.
-
-      "add @Semantics annotation for currency code
-      IF ls_header_fields-currencycode IS NOT INITIAL.
-        READ TABLE io_rap_bo_node->lt_fields INTO DATA(ls_field) WITH KEY name = to_upper( ls_header_fields-currencycode ).
-        IF sy-subrc = 0.
-          "for example @Semantics.amount.currencyCode: 'CurrencyCode'
-          lo_field->add_annotation( 'Semantics.amount.currencyCode' )->value->build( )->add_string( CONV #( ls_field-cds_view_field ) ).
-        ENDIF.
-      ENDIF.
-
-      "add @Semantics annotation for unit of measure
-      IF ls_header_fields-unitofmeasure IS NOT INITIAL.
-        CLEAR ls_field.
-        READ TABLE io_rap_bo_node->lt_fields INTO ls_field WITH KEY name = to_upper( ls_header_fields-unitofmeasure ).
-        IF sy-subrc = 0.
-          "for example @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
-          lo_field->add_annotation( 'Semantics.quantity.unitOfMeasure' )->value->build( )->add_string( CONV #( ls_field-cds_view_field ) ).
-        ENDIF.
-      ENDIF.
-
-      CASE ls_header_fields-name.
-        WHEN io_rap_bo_node->field_name-created_at.
-          lo_field->add_annotation( 'Semantics.systemDateTime.createdAt' )->value->build( )->add_boolean( abap_true ).
-        WHEN io_rap_bo_node->field_name-created_by.
-          lo_field->add_annotation( 'Semantics.user.createdBy' )->value->build( )->add_boolean( abap_true ).
-        WHEN io_rap_bo_node->field_name-last_changed_at.
-          lo_field->add_annotation( 'Semantics.systemDateTime.lastChangedAt' )->value->build( )->add_boolean( abap_true ).
-        WHEN io_rap_bo_node->field_name-last_changed_by.
-          lo_field->add_annotation( 'Semantics.user.lastChangedBy' )->value->build( )->add_boolean( abap_true ).
-        WHEN io_rap_bo_node->field_name-local_instance_last_changed_at.
-          lo_field->add_annotation( 'Semantics.systemDateTime.localInstanceLastChangedAt' )->value->build( )->add_boolean( abap_true ).
-        WHEN io_rap_bo_node->field_name-local_instance_last_changed_by.
-          lo_field->add_annotation( 'Semantics.user.localInstanceLastChangedBy' )->value->build( )->add_boolean( abap_true ).
-      ENDCASE.
-
-      "add UI annotations
-
-      "put facet annotation in front of the first field
-      IF pos = 10.
-        add_annotation_ui_facets(
-          EXPORTING
-            io_field       = lo_field
-            io_rap_bo_node = io_rap_bo_node
-        ).
-      ENDIF.
-      IF ls_header_fields-is_hidden = abap_true.
-        add_anno_ui_hidden(
-          EXPORTING
-            io_field         = lo_field
-            ls_header_fields = ls_header_fields
-        ).
-      ELSE.
-        add_anno_ui_lineitem(
-          EXPORTING
-            io_field         = lo_field
-            ls_header_fields = ls_header_fields
-            position         = pos
-        ).
-
-        add_anno_ui_identification(
-          EXPORTING
-            io_field                 = lo_field
-            io_rap_bo_node           = io_rap_bo_node
-            ls_header_fields         = ls_header_fields
-            position                 = pos
-        ).
-
-        "add selection fields for semantic key fields or for the fields that are marked as object id
-        add_annotation_ui_selectionfld(
-          EXPORTING
-            io_field         = lo_field
-            io_rap_bo_node   = io_rap_bo_node
-            ls_header_fields = ls_header_fields
-            position         = pos
-        ).
-
-      ENDIF.
-
-    ENDLOOP.
-
-    "add associations
-
-    LOOP AT io_rap_bo_node->lt_association INTO DATA(ls_assocation).
-
-      CLEAR ls_condition_components.
-      CLEAR lt_condition_components.
-      LOOP AT ls_assocation-condition_components INTO DATA(ls_components).
-        ls_condition_components-association_field =  ls_components-association_field.
-        ls_condition_components-projection_field = ls_components-projection_field.
-        ls_condition_components-association_name = ls_assocation-name.
-        APPEND ls_condition_components TO lt_condition_components.
-      ENDLOOP.
-
-      lo_condition = create_condition( lt_condition_components ).
-
-      lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_assocation-name ) ).
-
-      DATA(lo_association) = lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-cds_view_r
-       " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
-        )->set_condition( lo_condition ).
-
-      CASE ls_assocation-cardinality .
-        WHEN ZDMO_cl_rap_node=>cardinality-one.
-          lo_association->set_cardinality(  xco_cp_cds=>cardinality->one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_n.
-          lo_association->set_cardinality(  xco_cp_cds=>cardinality->one_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_n.
-          lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_one.
-          lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_one.
-          "@todo: currently association[1] will be generated
-          "fix available with 2008 HFC2
-          lo_association->set_cardinality(  xco_cp_cds=>cardinality->range( iv_min = 1 iv_max = 1 ) ).
-      ENDCASE.
-
-    ENDLOOP.
-
-    LOOP AT       io_rap_bo_node->lt_additional_fields INTO DATA(additional_fields) WHERE cds_restricted_reuse_view = abap_true.
-      lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( additional_fields-name )  ).
-      IF additional_fields-cds_view_field IS NOT INITIAL.
-        lo_Field->set_alias( additional_fields-cds_view_field ).
-      ENDIF.
-    ENDLOOP.
+*    DATA ls_condition_components TYPE ts_condition_components.
+*    DATA lt_condition_components TYPE tt_condition_components.
+*    DATA lo_field TYPE REF TO if_xco_gen_ddls_s_fo_field .
+*    DATA pos TYPE i.
+*
+*    DATA(lo_specification) = mo_put_operation->for-ddls->add_object( io_rap_bo_node->rap_node_objects-custom_entity
+*     )->set_package( mo_package
+*     )->create_form_specification( ).
+*
+*    "add object name and type to list of generated repository objects
+*    CLEAR generated_repository_object.
+*    generated_repository_object-object_name = io_rap_bo_node->rap_node_objects-custom_entity.
+*    generated_repository_object-object_type = 'DDLS'.
+*    APPEND generated_repository_object TO generated_repository_objects.
+*
+*    "create a custom entity
+*    DATA(lo_view) = lo_specification->set_short_description( |CDS View for { io_rap_bo_node->rap_node_objects-alias  }|
+*      )->add_custom_entity( ) ##no_text.
+*
+*    " Annotations can be added to custom entities.
+*    lo_view->add_annotation( 'ObjectModel.query.implementedBy' )->value->build( )->add_string( |ABAP:{ io_rap_bo_node->rap_node_objects-custom_query_impl_class }| ).
+*
+*    "@ObjectModel.query.implementedBy:'ABAP:ZDMO_CL_TRAVEL_UQ'
+*
+*    "in contrast to MDE the annotations are not added to the specification but to the view
+*    add_annotation_ui_header(
+*      EXPORTING
+*        io_specification = lo_view
+*        io_rap_bo_node = io_rap_bo_node
+*    ).
+*
+*    IF io_rap_bo_node->is_root( ).
+*      lo_view->set_root( ).
+*    ELSE.
+*
+*      CASE io_rap_bo_node->get_implementation_type(  ) .
+*
+*        WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
+*
+*          CLEAR ls_condition_components.
+*          CLEAR lt_condition_components.
+*
+*          LOOP AT io_rap_bo_node->parent_node->semantic_key INTO DATA(ls_semantic_key).
+*            ls_condition_components-association_name = '_' && io_rap_bo_node->parent_node->rap_node_objects-alias.
+*            ls_condition_components-association_field = ls_semantic_key-cds_view_field.
+*            ls_condition_components-projection_field = ls_semantic_key-cds_view_field.
+*            APPEND ls_condition_components TO lt_condition_components.
+*          ENDLOOP.
+*
+*          DATA(lo_condition) = create_condition( lt_condition_components ).
+*
+*      ENDCASE.
+*
+*      lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && io_rap_bo_node->parent_node->rap_node_objects-alias ) ).
+*      lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-custom_entity
+*       " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
+*        )->set_condition( lo_condition )->set_to_parent( ).
+*
+*      IF io_rap_bo_node->is_grand_child_or_deeper(  ).
+*
+*        CASE io_rap_bo_node->get_implementation_type(  ) .
+*
+*          WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
+*
+*            CLEAR ls_condition_components.
+*            CLEAR lt_condition_components.
+*
+*            LOOP AT io_rap_bo_node->ROOT_node->semantic_key INTO DATA(ls_root_semantic_key).
+*              ls_condition_components-association_name = '_' && io_rap_bo_node->root_node->rap_node_objects-alias.
+*              ls_condition_components-association_field = ls_root_semantic_key-cds_view_field.
+*              ls_condition_components-projection_field = ls_root_semantic_key-cds_view_field.
+*              APPEND ls_condition_components TO lt_condition_components.
+*            ENDLOOP.
+*
+*            lo_condition = create_condition( lt_condition_components ).
+*
+*        ENDCASE.
+*
+*        lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && io_rap_bo_node->root_node->rap_node_objects-alias ) ).
+*        lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-custom_entity
+*         " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
+*          )->set_condition( lo_condition )->set_to_parent(  ).
+*
+*      ENDIF.
+*
+*    ENDIF.
+*
+*    " Data source.
+*
+*    IF io_rap_bo_node->has_childs(  ).   " create_item_objects(  ).
+*      " Composition.
+*
+*      "change to a new property "childnodes" which only contains the direct childs
+*      LOOP AT io_rap_bo_node->childnodes INTO DATA(lo_childnode).
+*
+*        " Sample field with composition:
+*        lo_field = lo_view->add_field( xco_cp_ddl=>field( '_' && lo_childnode->rap_node_objects-alias  ) ).
+*        lo_field->create_composition( lo_childnode->rap_node_objects-custom_entity
+*       )->set_cardinality( xco_cp_cds=>cardinality->zero_to_n ).
+*
+*
+*
+*      ENDLOOP.
+*
+*    ENDIF.
+*
+*
+*    "Client field does not need to be specified in client-specific CDS view
+*
+*    CLEAR pos.
+*
+*    LOOP AT io_rap_bo_node->lt_fields  INTO  DATA(ls_header_fields) WHERE  name  <> io_rap_bo_node->field_name-client . "   co_client.
+*
+*      pos += 10.
+*
+*      IF ls_header_fields-key_indicator = abap_true.
+*        lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_header_fields-cds_view_field )
+*           )->set_key( ). "->set_alias(  ls_header_fields-cds_view_field  ).
+*      ELSE.
+*        lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_header_fields-cds_view_field )
+*           ). "->set_alias( ls_header_fields-cds_view_field ).
+*      ENDIF.
+*
+*      IF ls_header_fields-is_data_element = abap_true.
+*        lo_field->set_type( xco_cp_abap_dictionary=>data_element( ls_header_fields-data_element ) ).
+*      ENDIF.
+*      IF ls_header_fields-is_built_in_type = abAP_TRUE.
+*        lo_field->set_type( xco_cp_abap_dictionary=>built_in_type->for(
+*                                        iv_type     =  ls_header_fields-built_in_type
+*                                        iv_length   = ls_header_fields-built_in_type_length
+*                                        iv_decimals = ls_header_fields-built_in_type_decimals
+*                                        ) ).
+*      ENDIF.
+*
+*      "add @Semantics annotation for currency code
+*      IF ls_header_fields-currencycode IS NOT INITIAL.
+*        READ TABLE io_rap_bo_node->lt_fields INTO DATA(ls_field) WITH KEY name = to_upper( ls_header_fields-currencycode ).
+*        IF sy-subrc = 0.
+*          "for example @Semantics.amount.currencyCode: 'CurrencyCode'
+*          lo_field->add_annotation( 'Semantics.amount.currencyCode' )->value->build( )->add_string( CONV #( ls_field-cds_view_field ) ).
+*        ENDIF.
+*      ENDIF.
+*
+*      "add @Semantics annotation for unit of measure
+*      IF ls_header_fields-unitofmeasure IS NOT INITIAL.
+*        CLEAR ls_field.
+*        READ TABLE io_rap_bo_node->lt_fields INTO ls_field WITH KEY name = to_upper( ls_header_fields-unitofmeasure ).
+*        IF sy-subrc = 0.
+*          "for example @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
+*          lo_field->add_annotation( 'Semantics.quantity.unitOfMeasure' )->value->build( )->add_string( CONV #( ls_field-cds_view_field ) ).
+*        ENDIF.
+*      ENDIF.
+*
+*      CASE ls_header_fields-name.
+*        WHEN io_rap_bo_node->field_name-created_at.
+*          lo_field->add_annotation( 'Semantics.systemDateTime.createdAt' )->value->build( )->add_boolean( abap_true ).
+*        WHEN io_rap_bo_node->field_name-created_by.
+*          lo_field->add_annotation( 'Semantics.user.createdBy' )->value->build( )->add_boolean( abap_true ).
+*        WHEN io_rap_bo_node->field_name-last_changed_at.
+*          lo_field->add_annotation( 'Semantics.systemDateTime.lastChangedAt' )->value->build( )->add_boolean( abap_true ).
+*        WHEN io_rap_bo_node->field_name-last_changed_by.
+*          lo_field->add_annotation( 'Semantics.user.lastChangedBy' )->value->build( )->add_boolean( abap_true ).
+*        WHEN io_rap_bo_node->field_name-local_instance_last_changed_at.
+*          lo_field->add_annotation( 'Semantics.systemDateTime.localInstanceLastChangedAt' )->value->build( )->add_boolean( abap_true ).
+*        WHEN io_rap_bo_node->field_name-local_instance_last_changed_by.
+*          lo_field->add_annotation( 'Semantics.user.localInstanceLastChangedBy' )->value->build( )->add_boolean( abap_true ).
+*      ENDCASE.
+*
+*      "add UI annotations
+*
+*      "put facet annotation in front of the first field
+*      IF pos = 10.
+*        add_annotation_ui_facets(
+*          EXPORTING
+*            io_field       = lo_field
+*            io_rap_bo_node = io_rap_bo_node
+*        ).
+*      ENDIF.
+*      IF ls_header_fields-is_hidden = abap_true.
+*        add_anno_ui_hidden(
+*          EXPORTING
+*            io_field         = lo_field
+*            ls_header_fields = ls_header_fields
+*        ).
+*      ELSE.
+*        add_anno_ui_lineitem(
+*          EXPORTING
+*            io_field         = lo_field
+*            ls_header_fields = ls_header_fields
+*            position         = pos
+*        ).
+*
+*        add_anno_ui_identification(
+*          EXPORTING
+*            io_field                 = lo_field
+*            io_rap_bo_node           = io_rap_bo_node
+*            ls_header_fields         = ls_header_fields
+*            position                 = pos
+*        ).
+*
+*        "add selection fields for semantic key fields or for the fields that are marked as object id
+*        add_annotation_ui_selectionfld(
+*          EXPORTING
+*            io_field         = lo_field
+*            io_rap_bo_node   = io_rap_bo_node
+*            ls_header_fields = ls_header_fields
+*            position         = pos
+*        ).
+*
+*      ENDIF.
+*
+*    ENDLOOP.
+*
+*    "add associations
+*
+*    LOOP AT io_rap_bo_node->lt_association INTO DATA(ls_assocation).
+*
+*      CLEAR ls_condition_components.
+*      CLEAR lt_condition_components.
+*      LOOP AT ls_assocation-condition_components INTO DATA(ls_components).
+*        ls_condition_components-association_field =  ls_components-association_field.
+*        ls_condition_components-projection_field = ls_components-projection_field.
+*        ls_condition_components-association_name = ls_assocation-name.
+*        APPEND ls_condition_components TO lt_condition_components.
+*      ENDLOOP.
+*
+*      lo_condition = create_condition( lt_condition_components ).
+*
+*      lo_field = lo_view->add_field( xco_cp_ddl=>field( ls_assocation-name ) ).
+*
+*      DATA(lo_association) = lo_field->create_association( io_rap_bo_node->parent_node->rap_node_objects-cds_view_r
+*       " )->set_cardinality( xco_cp_cds=>cardinality->one_to_n
+*        )->set_condition( lo_condition ).
+*
+*      CASE ls_assocation-cardinality .
+*        WHEN ZDMO_cl_rap_node=>cardinality-one.
+*          lo_association->set_cardinality(  xco_cp_cds=>cardinality->one ).
+*        WHEN ZDMO_cl_rap_node=>cardinality-one_to_n.
+*          lo_association->set_cardinality(  xco_cp_cds=>cardinality->one_to_n ).
+*        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_n.
+*          lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_n ).
+*        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_one.
+*          lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_one ).
+*        WHEN ZDMO_cl_rap_node=>cardinality-one_to_one.
+*          "@todo: currently association[1] will be generated
+*          "fix available with 2008 HFC2
+*          lo_association->set_cardinality(  xco_cp_cds=>cardinality->range( iv_min = 1 iv_max = 1 ) ).
+*      ENDCASE.
+*
+*    ENDLOOP.
+*
+*    LOOP AT       io_rap_bo_node->lt_additional_fields INTO DATA(additional_fields) WHERE cds_restricted_reuse_view = abap_true.
+*      lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( additional_fields-name )  ).
+*      IF additional_fields-cds_view_field IS NOT INITIAL.
+*        lo_Field->set_alias( additional_fields-cds_view_field ).
+*      ENDIF.
+*    ENDLOOP.
 **********************************************************************
 ** End of deletion 2020
 **********************************************************************

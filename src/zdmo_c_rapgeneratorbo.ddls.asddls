@@ -4,7 +4,7 @@
 @ObjectModel.semanticKey: [ 'BoName' ]
 @Search.searchable: true
 define root view entity ZDMO_C_RAPGENERATORBO
-  provider contract transactional_query
+//  provider contract transactional_query
   as projection on ZDMO_R_RAPGENERATORBO
 
 {

@@ -14,8 +14,8 @@ CLASS lhc_rapgeneratorbonode DEFINITION INHERITING FROM cl_abap_behavior_handler
 
 
 
-    METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
-      IMPORTING REQUEST requested_authorizations FOR rapgeneratorbonode RESULT result.
+*    METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
+*      IMPORTING REQUEST requested_authorizations FOR rapgeneratorbonode RESULT result.
 
 *    METHODS addchild2 FOR MODIFY
 *      IMPORTING keys FOR ACTION rapgeneratorbonode~addchild2 .
@@ -24,8 +24,8 @@ CLASS lhc_rapgeneratorbonode DEFINITION INHERITING FROM cl_abap_behavior_handler
       IMPORTING keys   FOR ACTION rapgeneratorbonode~addchild2
       RESULT    result
       .
-    METHODS setchangedatfieldnames FOR DETERMINE ON MODIFY
-      IMPORTING keys FOR rapgeneratorbonode~setchangedatfieldnames.
+*    METHODS setchangedatfieldnames FOR DETERMINE ON MODIFY
+*      IMPORTING keys FOR rapgeneratorbonode~setchangedatfieldnames.
     METHODS setparentandrootuuid FOR DETERMINE ON MODIFY
       IMPORTING keys FOR rapgeneratorbonode~setparentandrootuuid.
     METHODS setfieldnames FOR DETERMINE ON MODIFY
@@ -43,15 +43,103 @@ ENDCLASS.
 CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
   METHOD mandatory_fields_check.
-  
+*
+*    DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdmo_c_rapgeneratorbonode.
+*
+*    DATA reported_rapgeneratorbonode_li LIKE LINE OF reported-rapgeneratorbonode.
+*
+*    DATA(description_permission_request) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_data_ref( REF #( permission_request-%field ) ) ).
+*    DATA(components_permission_request) = description_permission_request->get_components(  ).
+*
+*    LOOP AT components_permission_request INTO DATA(component_permission_request).
+*      permission_request-%field-(component_permission_request-name) = if_abap_behv=>mk-on.
+*    ENDLOOP.
+*
+*    " Get Permissions without instance keys, as we are only interested in static / global feature control ( mandatory )
+**    GET PERMISSIONS OF  zdmo_c_rapgeneratorbo
+**      ENTITY rapgeneratorbonode
+**      FROM VALUE #(  )
+**        REQUEST permission_request
+**        RESULT DATA(permission_result)
+**        FAILED DATA(failed_permission_result)
+**        REPORTED DATA(reported_permission_result).
+*
+*
+*
+*    " Get current field values
+*    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*    ENTITY rapgeneratorbonode
+*      ALL FIELDS
+*      WITH CORRESPONDING #( keys )
+*      RESULT DATA(entities).
+*
+*    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*      ENTITY RAPGeneratorBONode BY \_RAPGeneratorBO
+*        FROM CORRESPONDING #( entities )
+*      LINK DATA(Project_Node_links).
+*
+*    "Do check
+*    LOOP AT entities INTO DATA(entity).
+*
+*      GET PERMISSIONS ONLY INSTANCE features ENTITY zdmo_c_rapgeneratorbonode
+**      GET PERMISSIONS ONLY FEATURES ENTITY zdmo_c_rapgeneratorbonode
+*                FROM VALUE #( ( NodeUUID = entity-NodeUUID ) )
+*                REQUEST permission_request
+*                RESULT DATA(permission_result)
+*                FAILED DATA(failed_permission_result)
+*                REPORTED DATA(reported_permission_result).
+*
+**      APPEND VALUE #(  %tky               = entity-%tky
+**                       %state_area        = 'VALIDATE_MAND_FIELDS' ) TO reported-rapgeneratorbonode.
+*
+*      LOOP AT components_permission_request INTO component_permission_request.
+*
+*        IF ( permission_result-global-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory or
+*             permission_result-instances[ NodeUUID = entity-NodeUUID ]-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory )
+*                                AND entity-(component_permission_request-name) IS INITIAL.
+*
+*           APPEND VALUE #( %tky = entity-%tky ) TO failed-rapgeneratorbonode.
+*
+*          "since %element-(component_permission_request-name) = if_abap_behv=>mk-on could not be added using a VALUE statement
+*          "add the value via assigning value to the field of a structure
+*
+*          CLEAR reported_rapgeneratorbonode_li.
+*          reported_rapgeneratorbonode_li-%tky = entity-%tky.
+**          reported_rapgeneratorbonode_li-%state_area         = 'VALIDATE_MAND_FIELDS'.
+*          reported_rapgeneratorbonode_li-%element-(component_permission_request-name) = if_abap_behv=>mk-on.
+*          reported_rapgeneratorbonode_li-%msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
+*                                                           number   = 070
+*                                                           severity = if_abap_behv_message=>severity-error
+*                                                           v1       = |{ component_permission_request-name }|
+*                                                           v2       = |{ entity-entityname }| ).
+*
+**          reported_rapgeneratorbonode_li-%path               = VALUE #( rapgeneratorbo-%tky = Project_Node_links[ source-%tky = entity-%tky ]-target-%tky ).
+*
+*          APPEND reported_rapgeneratorbonode_li  TO reported-rapgeneratorbonode.
+*
+**          APPEND VALUE #( %tky = entity-%tky
+***                   %element-(component_permission_request-name) = if_abap_behv=>mk-on
+**                    %msg = new_message(
+**                            id       = 'ZDMO_CM_RAP_GEN_MSG'
+**                            number   = 013
+**                            severity = if_abap_behv_message=>severity-error
+**                            v1       = |{ component_permission_request-name }| )
+**                           )
+**          TO reported-rapgeneratorbo.
+*
+*        ENDIF.
+*      ENDLOOP.
+*
+*    ENDLOOP.
+
   ENDMETHOD.
 
 
   METHOD calculatenodenumber.
 
-    DATA max_nodenumber TYPE ZDMO_rapgen_node-node_number.
+    DATA max_nodenumber TYPE zdmo_rapgen_node-node_number.
     DATA is_root_node TYPE abap_bool.
-    DATA hierarchy_distance_from_root  TYPE  ZDMO_rapgen_node-hierarchy_distance_from_root .
+    DATA hierarchy_distance_from_root  TYPE  zdmo_rapgen_node-hierarchy_distance_from_root .
 
     DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode.
 *
@@ -134,44 +222,54 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
   METHOD get_instance_features.
 
+    "read all child instances
+    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+      ENTITY rapgeneratorbonode
+        FIELDS (  entityname isrootnode viewtypevalue hierarchydistancefromroot )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(rapbo_nodes).
+
+    "read all links from child instances to the corresponding parent entity
+    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+      ENTITY rapgeneratorbonode BY \_rapgeneratorbo
+        FROM CORRESPONDING #( rapbo_nodes )
+      LINK DATA(rapbo_nodes_links).
+
+    "read all parent entities of the child entities
     READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
     ENTITY rapgeneratorbonode BY \_rapgeneratorbo
       FIELDS (  implementationtype datasourcetype
                namespace prefix suffix draftenabled )
       WITH CORRESPONDING #( keys )
       RESULT DATA(rapbos).
-*
-    LOOP AT rapbos INTO DATA(rapbo).
-      " read a dummy field
-      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-        ENTITY rapgeneratorbo BY \_rapgeneratorbonode
-          FIELDS ( entityname isrootnode viewtypevalue hierarchydistancefromroot )
-        WITH VALUE #( ( %tky = rapbo-%tky ) )
-        RESULT DATA(rapbo_nodes).
 
-      result = VALUE #( FOR rapbo_node IN rapbo_nodes
-                            ( %tky                   = rapbo_node-%tky
+    LOOP AT rapbo_nodes INTO DATA(rapbo_node).
+
+      "use link data to retrieve the data of the parent entity of the currently selected child entity
+      DATA(rapbo) = rapbos[  rapnodeuuid = rapbo_nodes_links[ source-nodeuuid = rapbo_node-nodeuuid ]-target-rapnodeuuid ].
+
+      APPEND VALUE #(     %tky                   = rapbo_node-%tky
 
                               %action-addchild2      = COND #( WHEN rapbo-%is_draft = if_abap_behv=>mk-on
                                                                THEN if_abap_behv=>fc-o-enabled
                                                                ELSE if_abap_behv=>fc-o-disabled )
 
 
-                              %field-fieldnameuuid         = COND #( WHEN rapbo-implementationtype = ZDMO_cl_rap_node=>implementation_type-managed_uuid
+                              %field-fieldnameuuid         = COND #( WHEN rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
                                                                THEN if_abap_behv=>fc-f-mandatory
                                                                ELSE if_abap_behv=>fc-f-read_only )
 
-                              %field-fieldnamerootuuid     = COND #( WHEN ( rapbo-implementationtype = ZDMO_cl_rap_node=>implementation_type-managed_uuid
+                              %field-fieldnamerootuuid     = COND #( WHEN ( rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
                                                                       AND rapbo_node-hierarchydistancefromroot > 1 )
                                                                THEN if_abap_behv=>fc-f-mandatory
                                                                ELSE if_abap_behv=>fc-f-read_only )
 
-                             %field-fieldnameparentuuid    = COND #( WHEN ( rapbo-implementationtype = ZDMO_cl_rap_node=>implementation_type-managed_uuid
+                             %field-fieldnameparentuuid    = COND #( WHEN ( rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
                                                                       AND  rapbo_node-hierarchydistancefromroot > 0 )
                                                                THEN if_abap_behv=>fc-f-mandatory
                                                                ELSE if_abap_behv=>fc-f-read_only )
 
-                             %field-controlstructure       = COND #( WHEN rapbo-implementationtype = ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic
+                             %field-controlstructure       = COND #( WHEN rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-unmanaged_semantic
                                                                THEN if_abap_behv=>fc-f-mandatory
                                                                ELSE if_abap_behv=>fc-f-read_only )
 
@@ -218,10 +316,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
                                                                THEN if_abap_behv=>fc-f-unrestricted
                                                                ELSE if_abap_behv=>fc-f-read_only )
 
-                            ) ).
-
-
-
+                            ) TO result.
     ENDLOOP.
 
 
@@ -256,14 +351,14 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD get_global_authorizations.
-  ENDMETHOD.
+*  METHOD get_global_authorizations.
+*  ENDMETHOD.
 
   METHOD addchild2.
 
     DATA all_mapped TYPE RESPONSE FOR MAPPED EARLY zdmo_r_rapgeneratorbo .
 
-    DATA lt_create TYPE TABLE FOR CREATE ZDMO_r_rapgeneratorbonode.
+    DATA lt_create TYPE TABLE FOR CREATE zdmo_r_rapgeneratorbonode.
     DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode.
     DATA update_line TYPE STRUCTURE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode .
     DATA number_of_childs TYPE i.
@@ -323,13 +418,13 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
         "check if it is tried to add a third level (grand child) to a service that is to
         "be registered in the Manage Business Configuration App
-        IF rapbo-AddToManageBusinessConfig = abap_true AND
+        IF rapbo-addtomanagebusinessconfig = abap_true AND
            rapbo_nodes[ nodeuuid = ls_key-nodeuuid ]-hierarchydistancefromroot + 1  >= 2.
           APPEND VALUE #( nodeuuid = ls_key-nodeuuid
                          %msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                          number   = 069
                                          severity = if_abap_behv_message=>severity-error
-                                         v1       = |{ rapbos[ rapnodeuuid = rapbo_nodes[ nodeuuid = ls_key-nodeuuid ]-HeaderUUID ]-BoName }| ) )
+                                         v1       = |{ rapbos[ rapnodeuuid = rapbo_nodes[ nodeuuid = ls_key-nodeuuid ]-headeruuid ]-boname }| ) )
             TO reported-rapgeneratorbonode.
           RETURN.
         ENDIF.
@@ -387,62 +482,11 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD setchangedatfieldnames.
-
-
-    DATA my_node TYPE REF TO ZDMO_cl_rap_node.
-    DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode.
-    DATA update_line TYPE STRUCTURE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode .
-*
-    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-    ENTITY rapgeneratorbonode BY \_rapgeneratorbo
-    FIELDS ( prefix suffix namespace packagename implementationtype )
-    WITH CORRESPONDING #( keys )
-    RESULT DATA(rapbos).
-
-*
-*    " Process all affected RAPBos. Read respective nodes,
-*    " determine the implementation type of the RAP BO
-*
-    LOOP AT rapbos INTO DATA(rapbo).
-      CLEAR update_line.
-
-      " read a dummy field
-      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-        ENTITY rapgeneratorbo BY \_rapgeneratorbonode
-          FIELDS ( entityname  cdsiview  cdspview   )
-        WITH VALUE #( ( %tky = rapbo-%tky ) )
-        RESULT DATA(rapbo_nodes).
-      LOOP AT rapbo_nodes INTO DATA(rapbo_node).
-
-
-        update_line-%tky      = rapbo_node-%tky.
-        update_line-fieldnamelastchangedat = rapbo_node-fieldnametotaletag .
-        update_line-fieldnameloclastchangedat = rapbo_node-fieldnameetagmaster.
-        APPEND update_line TO update.
-
-      ENDLOOP.
-    ENDLOOP.
-
-
-    " Update the Booking ID of all relevant bookings
-    MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-    ENTITY rapgeneratorbonode
-      UPDATE FIELDS (
-                      fieldnamelastchangedat
-                      fieldnameloclastchangedat
-                      ) WITH update
-    REPORTED DATA(update_reported).
-
-    reported = CORRESPONDING #( DEEP update_reported ).
-
-
-  ENDMETHOD.
 
   METHOD setparentandrootuuid.
 
 
-    DATA my_node TYPE REF TO ZDMO_cl_rap_node.
+    DATA my_node TYPE REF TO zdmo_cl_rap_node.
     DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode.
     DATA update_line TYPE STRUCTURE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode .
 *
@@ -676,8 +720,8 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
 
 
-    DATA my_node TYPE REF TO ZDMO_cl_rap_node.
-    DATA root_node TYPE REF TO ZDMO_cl_rap_node.
+    DATA my_node TYPE REF TO zdmo_cl_rap_node.
+    DATA root_node TYPE REF TO zdmo_cl_rap_node.
 
 
     DATA update_bo TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbo.
@@ -713,11 +757,11 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 *
     LOOP AT rapbos INTO DATA(rapbo).
 
-      DATA my_xco_lib TYPE REF TO ZDMO_cl_rap_xco_lib.
-      IF rapbo-abaplanguageversion = ZDMO_cl_rap_node=>abap_language_version-abap_for_cloud_development.
-        my_xco_lib = NEW ZDMO_cl_rap_xco_cloud_lib(  ).
+      DATA my_xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
+      IF rapbo-abaplanguageversion = zdmo_cl_rap_node=>abap_language_version-abap_for_cloud_development.
+        my_xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
       ELSE.
-        my_xco_lib = NEW ZDMO_cl_rap_xco_on_prem_lib( ) .
+        my_xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib( ) .
       ENDIF.
 
       CLEAR update_bo_line.
@@ -733,7 +777,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
       SORT rapbo_nodes BY hierarchydistancefromroot ASCENDING. "loop will start with the root node
 
-      root_node = NEW ZDMO_cl_rap_node(  ).
+      root_node = NEW zdmo_cl_rap_node(  ).
       root_node->set_is_root_node(  ).
       root_node->set_xco_lib( my_xco_lib ).
       root_node->set_draft_enabled( rapbo-draftenabled ).
@@ -820,14 +864,14 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
               update_bo_line-adtlink   = | adt://{ sy-sysid }/sap/bc/adt/ddic/ddl/sources/{ my_node->rap_node_objects-cds_view_r } |.
             ENDIF.
 
-            IF rapbo-implementationtype = ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+            IF rapbo-implementationtype = zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
               my_node->set_name_control_structure(  ).
               update_line-controlstructure = my_node->rap_node_objects-control_structure.
             ELSE.
               update_line-controlstructure = ''.
             ENDIF.
 
-            IF rapbo-datasourcetype = ZDMO_cl_rap_node=>data_source_types-abstract_entity.              .
+            IF rapbo-datasourcetype = zdmo_cl_rap_node=>data_source_types-abstract_entity.              .
 
               my_node->set_name_custom_query_impl(  ).
               my_node->set_name_custom_entity(  ).
@@ -838,7 +882,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
             ENDIF.
 
 
-          CATCH ZDMO_cx_rap_generator INTO DATA(rap_node_exception).
+          CATCH zdmo_cx_rap_generator INTO DATA(rap_node_exception).
             DATA(exception_text) = rap_node_exception->get_text(  ).
         ENDTRY.
 
@@ -858,7 +902,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
     ENTITY rapgeneratorbo
       UPDATE FIELDS (
                       boname
-                      ADTLink
+                      adtlink
                      ) WITH update_bo
     ENTITY rapgeneratorbonode
       UPDATE FIELDS (
@@ -883,8 +927,8 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
   METHOD setrepofieldnames.
 
     DATA rapbo TYPE STRUCTURE FOR READ RESULT zdmo_r_rapgeneratorbo\\rapgeneratorbonode\_rapgeneratorbo .
-    DATA my_node TYPE REF TO ZDMO_cl_rap_node.
-    DATA my_parent_node TYPE REF TO ZDMO_cl_rap_node.
+    DATA my_node TYPE REF TO zdmo_cl_rap_node.
+    DATA my_parent_node TYPE REF TO zdmo_cl_rap_node.
     DATA update TYPE TABLE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode.
     DATA update_line TYPE STRUCTURE FOR UPDATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode .
 *
@@ -970,14 +1014,14 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
       IF rapbo_node-datasource IS NOT INITIAL.
 
         TRY.
-            DATA my_xco_lib TYPE REF TO ZDMO_cl_rap_xco_lib.
-            IF rapbo-abaplanguageversion = ZDMO_cl_rap_node=>abap_language_version-abap_for_cloud_development.
-              my_xco_lib = NEW ZDMO_cl_rap_xco_cloud_lib(  ).
+            DATA my_xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
+            IF rapbo-abaplanguageversion = zdmo_cl_rap_node=>abap_language_version-abap_for_cloud_development.
+              my_xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
             ELSE.
-              my_xco_lib = NEW ZDMO_cl_rap_xco_on_prem_lib( ) .
+              my_xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib( ) .
             ENDIF.
 
-            my_node = NEW ZDMO_cl_rap_node(  ).
+            my_node = NEW zdmo_cl_rap_node(  ).
             my_node->set_xco_lib( my_xco_lib ).
             my_node->set_implementation_type( CONV #( rapbo-implementationtype ) ).
             my_node->set_data_source_type( CONV #( rapbo-datasourcetype ) ).
@@ -1030,7 +1074,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
             ELSE.
 
-              my_parent_node = NEW ZDMO_cl_rap_node(  ).
+              my_parent_node = NEW zdmo_cl_rap_node(  ).
               my_parent_node->set_xco_lib( my_xco_lib ).
               my_parent_node->set_implementation_type( CONV #( rapbo-implementationtype ) ).
               my_parent_node->set_data_source_type( CONV #( rapbo-datasourcetype ) ).
@@ -1052,7 +1096,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
             ENDIF.
 
-          CATCH ZDMO_cx_rap_generator INTO DATA(rap_node_exception).
+          CATCH zdmo_cx_rap_generator INTO DATA(rap_node_exception).
             DATA(exception_text) = rap_node_exception->get_text(  ).
         ENDTRY.
 
