@@ -8,7 +8,7 @@ with additional save
 draft table zdmo_rapgener01d
 etag master LocalLastChangedAt
 lock master total etag LastChangedAt
-authorization master ( global )
+//authorization master ( global )
 
 {
 
@@ -30,10 +30,10 @@ authorization master ( global )
   draft action Resume;
   draft determine action Prepare
   {
-    validation (always) mandatory_fields_check;
-    validation (always) RAPGeneratorBONode ~ mandatory_fields_check;
-    validation (always) allowed_combinations;
-    determination (always) createJSONString; }
+    validation mandatory_fields_check;
+    validation RAPGeneratorBONode ~ mandatory_fields_check;
+    validation allowed_combinations;
+    determination createJSONString; }
 
   mapping for ZDMO_RAPGEN_BO
   {
@@ -73,8 +73,10 @@ authorization master ( global )
   association _RAPGeneratorBONode { create; with draft; }
 
   determination SetNameSpace on modify { field PackageName; }
-  determination SetObjectNames on modify { field Namespace, Suffix, Prefix, BindingType, ImplementationType, DraftEnabled, DataSourceType; }
-  determination SetFieldNames on modify { field ImplementationType, DraftEnabled; }
+  determination SetObjectNames on modify { field
+//  Namespace,
+  Suffix, Prefix, BindingType, ImplementationType, DraftEnabled, DataSourceType; }
+//  determination SetFieldNames on modify { field ImplementationType, DraftEnabled; }
   determination createJsonString on save { create; }
 
   validation mandatory_fields_check on save { field PackageName, BindingType, ImplementationType, DataSourceType; }
@@ -88,7 +90,7 @@ persistent table zdmo_rapgen_node
 draft table zdmo_rapgener00d
 etag master LocalLastChangedAt
 lock dependent by _RAPGeneratorBO
-authorization dependent by _RAPGeneratorBO
+//authorization dependent by _RAPGeneratorBO
 
 {
   field ( readonly )
@@ -161,7 +163,7 @@ authorization dependent by _RAPGeneratorBO
   association _RAPGeneratorBO { with draft; }
 
   determination CalculateNodeNumber on modify { create; }
-  determination SetChangedAtFieldNames on modify { field FieldNameEtagMaster, FieldNameTotalEtag; }
+//  determination SetChangedAtFieldNames on modify { field FieldNameEtagMaster, FieldNameTotalEtag; }
   determination SetRepositoryObjectNames on modify { create; field EntityName; }
   determination SetParentAndRootUUID on modify { field NodeUUID; }
   determination SetFieldNames on modify { field DataSource; }
