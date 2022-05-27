@@ -264,6 +264,18 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
 
         CASE  data_source_type.
           WHEN ZDMO_cl_rap_node=>data_source_types-cds_view or ZDMO_cl_rap_node=>data_source_types-abstract_entity .
+          
+            LOOP AT lt_cds_views INTO DATA(ls_cds_view).
+              business_data_line-package_name = package_name.
+              business_data_line-name = ls_cds_view->name.
+              business_data_line-language_version = abap_language_version.
+              business_data_line-type = data_source_type .
+              business_data_line-is_root_node = is_root_node.
+              business_data_line-parent_data_source = parent_data_source.
+              APPEND business_data_line TO business_data.
+            ENDLOOP.
+          
+          
             "first add cds views from software component
 *            LOOP AT lt_cds_views INTO DATA(ls_cds_view).
 *              DATA(view_type) = ls_cds_view->get_type( ).
