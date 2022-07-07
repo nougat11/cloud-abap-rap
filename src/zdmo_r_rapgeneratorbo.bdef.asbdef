@@ -22,6 +22,9 @@ authorization master ( global )
   delete;
 
   static action createBOandRootNode parameter ZDMO_i_rap_gen_param_rapbonode result [1] $self;
+
+//  factory action copyProject [1]; //result [1] $self;
+  action ( features : instance ) copyProject result [1] $self;
   action ( features : instance ) createBO result [1] $self;
 
   draft action ( features : instance ) Edit;
@@ -30,10 +33,10 @@ authorization master ( global )
   draft action Resume;
   draft determine action Prepare
   {
-    validation (always) mandatory_fields_check;
-    validation (always) RAPGeneratorBONode ~ mandatory_fields_check;
-    validation (always) allowed_combinations;
-    determination (always) createJSONString; }
+    validation ( always ) mandatory_fields_check;
+    validation ( always ) RAPGeneratorBONode ~ mandatory_fields_check;
+    validation ( always ) allowed_combinations;
+    determination ( always ) createJSONString; }
 
   mapping for ZDMO_RAPGEN_BO
   {
@@ -76,6 +79,7 @@ authorization master ( global )
   determination SetObjectNames on modify { field Namespace, Suffix, Prefix, BindingType, ImplementationType, DraftEnabled, DataSourceType; }
   determination SetFieldNames on modify { field ImplementationType, DraftEnabled; }
   determination createJsonString on save { create; }
+
 
   validation mandatory_fields_check on save { field PackageName, BindingType, ImplementationType, DataSourceType; }
   validation allowed_combinations on save { field CustomizingTable, MultiInlineEdit, AddToManageBusinessConfig; }
