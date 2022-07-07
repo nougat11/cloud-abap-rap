@@ -32,8 +32,8 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
         DATA(filter_condition_ranges) = io_request->get_filter( )->get_as_ranges(  ).
         DATA(search_string) = to_upper( io_request->get_search_expression( ) ).
 
-           READ TABLE filter_condition_ranges WITH KEY name = 'LANGUAGE_VERSION'
-              INTO DATA(filter_condition_language).
+        READ TABLE filter_condition_ranges WITH KEY name = 'LANGUAGE_VERSION'
+           INTO DATA(filter_condition_language).
 
         IF filter_condition_language IS NOT INITIAL.
           DATA(abap_language_version) = filter_condition_language-range[ 1 ]-low.
@@ -81,40 +81,40 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
 
         "if data source is a CDS view we can simply show those views that can be reached via association / composition
 
-        IF is_root_node = abap_false AND
+        IF is_root_node <> abap_true AND
            parent_data_source IS NOT INITIAL AND
            ( data_source_type = ZDMO_cl_rap_node=>data_source_types-cds_view or
              data_source_type = ZDMO_cl_rap_node=>data_source_types-abstract_entity ).
 
-          DATA(my_node) = NEW ZDMO_cl_rap_node( xco_lib ).
-          my_node->set_data_source_type( data_source_type ).
-          my_node->set_data_source( parent_data_source ).
+                    data(my_node) = NEW ZDMO_cl_rap_node( xco_lib ).
+            my_node->set_data_source_type( data_source_type ).
+            my_node->set_data_source( parent_data_source ).
 
-          IF my_node IS NOT INITIAL.
-            LOOP AT my_node->composition_targets INTO DATA(composition_target).
-              business_data_line-name = composition_target.
+            IF my_node IS NOT INITIAL.
+              LOOP AT my_node->composition_targets INTO DATA(composition_target).
+                business_data_line-name = composition_target.
 
-              business_data_line-package_name = package_name.
-              business_data_line-language_version = abap_language_version.
-              business_data_line-type = data_source_type .
-              business_data_line-is_root_node = is_root_node.
-              business_data_line-parent_data_source = parent_data_source.
-              APPEND business_data_line TO business_data.
-            ENDLOOP.
-            LOOP AT my_node->association_targets INTO DATA(association_target).
-              business_data_line-name = association_target.
-              business_data_line-package_name = package_name.
-              business_data_line-language_version = abap_language_version.
-              business_data_line-type = data_source_type .
-              business_data_line-is_root_node = is_root_node.
-              business_data_line-parent_data_source = parent_data_source.
-              APPEND business_data_line TO business_data.
-            ENDLOOP.
+                business_data_line-package_name = package_name.
+                business_data_line-language_version = abap_language_version.
+                business_data_line-type = data_source_type .
+                business_data_line-is_root_node = is_root_node.
+                business_data_line-parent_data_source = parent_data_source.
+                APPEND business_data_line TO business_data.
+              ENDLOOP.
+              LOOP AT my_node->association_targets INTO DATA(association_target).
+                business_data_line-name = association_target.
+                business_data_line-package_name = package_name.
+                business_data_line-language_version = abap_language_version.
+                business_data_line-type = data_source_type .
+                business_data_line-is_root_node = is_root_node.
+                business_data_line-parent_data_source = parent_data_source.
+                APPEND business_data_line TO business_data.
+              ENDLOOP.
+            ENDIF.
+            io_response->set_total_number_of_records( lines( business_data ) ).
+            io_response->set_data( business_data ).
+            EXIT.
           ENDIF.
-          io_response->set_total_number_of_records( lines( business_data ) ).
-          io_response->set_data( business_data ).
-          EXIT.
-        ENDIF.
 
         "start search only if more than minimal_search_string_length characters are provided
 
@@ -221,7 +221,7 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
                  xco_cp_abap_sql=>constraint->contains_pattern( search_string  )
                   ).
           CASE  data_source_type.
-            WHEN ZDMO_cl_rap_node=>data_source_types-cds_view or ZDMO_cl_rap_node=>data_source_types-abstract_entity.
+            WHEN ZDMO_cl_rap_node=>data_source_types-cds_view OR ZDMO_cl_rap_node=>data_source_types-abstract_entity.
               "lt_cds_views = xco_cp_abap_repository=>objects->ddls->all->in( xco_cp_abap=>repository )->get( ).
               lt_cds_views = xco_lib->get_views( VALUE #(
                                             ( lo_name_filter )
@@ -263,7 +263,7 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
 
 
         CASE  data_source_type.
-          WHEN ZDMO_cl_rap_node=>data_source_types-cds_view or ZDMO_cl_rap_node=>data_source_types-abstract_entity .
+          WHEN ZDMO_cl_rap_node=>data_source_types-cds_view OR ZDMO_cl_rap_node=>data_source_types-abstract_entity .
             "first add cds views from software component
             LOOP AT lt_cds_views INTO DATA(ls_cds_view).
               DATA(view_type) = ls_cds_view->get_type( ).
@@ -351,18 +351,17 @@ CLASS zdmo_cl_rap_gen_get_data_src IMPLEMENTATION.
 
       CATCH cx_root INTO DATA(exception).
         DATA(exception_message) = cl_message_helper=>get_latest_t100_exception( exception )->if_message~get_longtext( ).
-        data(exception_t100_key) = cl_message_helper=>get_latest_t100_exception( exception )->t100key.
+        DATA(exception_t100_key) = cl_message_helper=>get_latest_t100_exception( exception )->t100key.
 
-        raise EXCEPTION TYPE zdmo_cx_rap_gen_custom_entity
-              exporting
-                                  textid  = VALUE scx_t100key( msgid = exception_t100_key-msgid
-                                                               msgno = exception_t100_key-msgno
-                                                               attr1 = exception_t100_key-attr1
-                                                               attr2 = exception_t100_key-attr2
-                                                               attr3 = exception_t100_key-attr3
-                                                               attr4 = exception_t100_key-attr4 )
-
-                                  previous = exception .
+        RAISE EXCEPTION TYPE zdmo_cx_rap_gen_custom_entity
+          EXPORTING
+            textid   = VALUE scx_t100key( msgid = exception_t100_key-msgid
+                                          msgno = exception_t100_key-msgno
+                                          attr1 = exception_t100_key-attr1
+                                          attr2 = exception_t100_key-attr2
+                                          attr3 = exception_t100_key-attr3
+                                          attr4 = exception_t100_key-attr4 )
+            previous = exception.
 
     ENDTRY.
   ENDMETHOD.

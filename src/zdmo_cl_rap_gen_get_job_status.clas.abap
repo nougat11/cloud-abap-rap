@@ -11,7 +11,7 @@ ENDCLASS.
 
 
 
-CLASS zdmo_cl_rap_gen_get_job_status IMPLEMENTATION.
+CLASS ZDMO_CL_RAP_GEN_GET_JOB_STATUS IMPLEMENTATION.
 
 
   METHOD if_sadl_exit_calc_element_read~get_calculation_info.

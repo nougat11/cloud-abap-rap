@@ -7,7 +7,13 @@
       type: #STANDARD,
       label: 'RAP Business Object',
       value: 'BoName'
+    },
+    description:
+    {
+    label: 'Package Name',
+    value: 'PackageName'
     }
+
   },
   presentationVariant: [ {
     sortOrder: [ {
@@ -22,23 +28,45 @@
 annotate view ZDMO_C_RAPGENERATORBO with
 {
 
+
+
   @UI.facet: [
 
+  //  { purpose: #HEADER,
+  //    id:'idJobStatus',
+  //    type:  #DATAPOINT_REFERENCE,
+  //    position: 40,
+  //    targetQualifier: 'JobStatusText'
+  //  },
+  {
+    purpose: #HEADER,
+    type: #FIELDGROUP_REFERENCE,
+    position: 50,
+    targetQualifier: 'Fieldgroup1'
+  },
 
+
+  //   { purpose: #HEADER,
+  //    id:'idJobStatus',
+  //    type:  #FIELDGROUP_REFERENCE,
+  //    position: 40,
+  //    targetQualifier: 'FieldGroup1',
+  //    targetElement: 'JobStatusText'
+  //  },
 
   {
     id: 'idCollection',
-   type: #COLLECTION,
-    label: 'RAP Business Object',
+    type: #COLLECTION,
+    label: 'Project header data',
     position: 10
   },
 
-             { id:              'Fieldgroup1-ID',
-               type:            #FIELDGROUP_REFERENCE,
-               label:           'Lifecycle Management',
-               parentId:        'idJson',
-               targetQualifier: 'Fieldgroup1',
-               position:         20 },
+  //             { id:              'Fieldgroup1-ID',
+  //               type:            #FIELDGROUP_REFERENCE,
+  //               label:           'Lifecycle Management',
+  //               parentId:        'idJson',
+  //               targetQualifier: 'Fieldgroup1',
+  //               position:         20 },
 
         // Facet for Fieldgroup 2 - nested inside Facet 1
 
@@ -64,20 +92,22 @@ annotate view ZDMO_C_RAPGENERATORBO with
     label: 'Entities',
     position: 15 ,
     targetElement: '_RAPGeneratorBONode'
-  } ,
-
-    {
-      id: 'idJson',
-  //      parentId: 'idCollection',
-      type:  #COLLECTION,
-      label: 'RAP Generator',
-      position: 60
-    } ,
+  }
+  //  ,
+  //
+  //    {
+  //      id: 'idJson',
+  //  //      parentId: 'idCollection',
+  //      type:  #COLLECTION,
+  //      label: 'RAP Generator',
+  //      position: 60
+  //    }
+  ,
 
              { id:              'Fieldgroup4-ID',
                type:            #FIELDGROUP_REFERENCE,
-               label:           'JSON representation',
-               parentId:        'idJson',
+               label:           'Generator command line options',
+               parentId:        'idCollection',
                targetQualifier: 'Fieldgroup4',
                position:         70 }
 
@@ -90,16 +120,16 @@ annotate view ZDMO_C_RAPGENERATORBO with
     importance: #HIGH,
     label: 'RAP Business Object'  } ,
     {  type: #FOR_ACTION, dataAction: 'createBOandRootNode', label: 'New Project' }
+    ,
+    {  type: #FOR_ACTION, dataAction: 'copyProject', label: 'Copy Project' }
     ]
   @UI.identification: [ {
     position: 20,
     label: 'Root BO interface view' } ,
     { type: #FOR_ACTION, dataAction: 'createBO', label: 'Generate repository objects' }
+      ,
+      {  type: #FOR_ACTION, dataAction: 'copyProject', label: 'Copy Project' }
     ]
-  @UI.selectionField: [ {
-    position: 20
-    }
-  ]
 
   BoName;
 
@@ -110,6 +140,18 @@ annotate view ZDMO_C_RAPGENERATORBO with
                              url: 'ADTLink',
                              hidden: #(HideADTLink) }
                            ] }
+
+  @UI.lineItem: [ {
+   position: 26 ,
+   importance: #HIGH,
+   label: 'ADT Link'
+   ,
+                             type: #WITH_URL,
+                             url: 'ADTLink',
+                             hidden: #(HideADTLink) }
+
+   ]
+
   ADTLink;
 
 
@@ -117,26 +159,26 @@ annotate view ZDMO_C_RAPGENERATORBO with
                              position: 05 ,
                              label: 'Namespace'}
                              ] }
+
+
+  Namespace;
+  //
+  //  @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup3',
+  //                             position: 130 ,
+  //                             label: 'Package'
+  //                            } ] }
   @UI.lineItem: [ {
     position: 25 ,
     importance: #HIGH,
-    label: 'Namespace'  }
-
-    ]
-
-  Namespace;
-
-  @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup1',
-                             position: 30 ,
-                             label: 'Package'
-                            } ] }
+    label: 'Package'  } ]
 
   PackageName;
 
-  @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup1',
-                             position: 20 ,
-                             label: 'Package Language Version'
-                            } ] }
+  //  @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup2',
+  //                             position: 135 ,
+  //                             label: 'Package Language Version'
+  //                            } ] }
+  @UI.hidden : true
   PackageLanguageVersion;
 
   @UI.hidden: true
@@ -151,9 +193,9 @@ annotate view ZDMO_C_RAPGENERATORBO with
 
   @UI: {        fieldGroup:     [ { qualifier: 'Fieldgroup2',
                            position: 70 ,
-                           label: 'Implementation Type'} ] }
+                           label: 'Implementation and Key Type'} ] }
 
-
+  @UI.selectionField: [ { position: 20 } ]
   ImplementationType;
 
   @UI.lineItem: [ {
@@ -164,6 +206,7 @@ annotate view ZDMO_C_RAPGENERATORBO with
   @UI: {        fieldGroup:     [ { qualifier: 'Fieldgroup2',
                           position: 80 ,
                           label: 'Datasource Type'} ] }
+  @UI.selectionField: [ { position: 30 } ]
   DataSourceType;
 
   @UI.lineItem: [ {
@@ -175,6 +218,7 @@ annotate view ZDMO_C_RAPGENERATORBO with
   @UI: {        fieldGroup:     [ { qualifier: 'Fieldgroup2',
                           position: 90 ,
                           label: 'Binding Type'} ] }
+  @UI.selectionField: [ { position: 40 } ]
   BindingType;
 
   @UI.lineItem: [ {
@@ -186,6 +230,7 @@ annotate view ZDMO_C_RAPGENERATORBO with
   @UI: {        fieldGroup:     [ { qualifier: 'Fieldgroup2',
                          position: 100 ,
                          label: 'Draft enabled'} ] }
+  @UI.selectionField: [ { position: 50 } ]
   DraftEnabled;
 
   @UI: {      fieldGroup:     [ { qualifier: 'Fieldgroup3',
@@ -233,12 +278,12 @@ annotate view ZDMO_C_RAPGENERATORBO with
   @UI.hidden: true
   LastChangedBy;
 
-//  @UI.hidden: true
-    @UI.lineItem: [ {
-    position: 100 ,
-     importance: #HIGH,
-     label: 'Last changed at' }
-    ]
+  //  @UI.hidden: true
+  @UI.lineItem: [ {
+  position: 100 ,
+   importance: #HIGH,
+   label: 'Last changed at' }
+  ]
 
   LastChangedAt;
 
@@ -251,10 +296,16 @@ annotate view ZDMO_C_RAPGENERATORBO with
   LocalLastChangedAt;
 
   @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup4',
+                         position: 230 ,
+                         label: 'Transport request'} ] }
+  TransportRequest;
+
+  @UI: { fieldGroup:     [ { qualifier: 'Fieldgroup4',
                            position: 240 ,
                            label: 'Json string'} ] }
   @UI.multiLineText: true
   JsonString;
+
 
   @UI.lineItem: [ {
   position: 220 ,
@@ -266,6 +317,8 @@ annotate view ZDMO_C_RAPGENERATORBO with
                          position: 40 ,
                          label: 'Generation Status',
                          criticality: 'JobStatusCriticality'} ] }
+  @UI.dataPoint: {title: 'Generation Job Status', targetValueElement: 'JobStatusText', criticality: 'JobStatusCriticality',
+  criticalityRepresentation: #WITH_ICON}
   JobStatusText;
 
 

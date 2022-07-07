@@ -277,7 +277,7 @@ ENDCLASS.
 
 
 
-CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
+CLASS ZDMO_CL_RAP_GENERATOR_ON_PREM IMPLEMENTATION.
 
 
   METHOD assign_package.
@@ -3517,6 +3517,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     r_generated_repository_objects = generated_repository_objects.
   ENDMETHOD.
 
+
   METHOD create_i_cds_view.
 
     DATA(lo_specification) = mo_put_operation->for-ddls->add_object( io_rap_bo_node->rap_node_objects-cds_view_i
@@ -3584,5 +3585,4 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-
 ENDCLASS.

@@ -133,6 +133,7 @@ CLASS ZDMO_CL_RAP_GEN_BUILD_JSON IMPLEMENTATION.
       lo_json_data_builder->add_member( 'multiInlineEdit' )->add_boolean( rap_bo-MultiInlineEdit ).
       lo_json_data_builder->add_member( 'isCustomizingTable' )->add_boolean( rap_bo-CustomizingTable ).
       lo_json_data_builder->add_member( 'addBusinessConfigurationRegistration' )->add_boolean( rap_bo-AddToManageBusinessConfig ).
+      lo_json_data_builder->add_member( 'transportRequest' )->add_string( CONV string( rap_bo-TransportRequest ) ).
 
       lo_json_data_builder->add_member( 'hierarchy' ).
 

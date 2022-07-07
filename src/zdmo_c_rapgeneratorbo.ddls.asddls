@@ -5,7 +5,7 @@
 @Search.searchable: true
 define root view entity ZDMO_C_RAPGENERATORBO
   provider contract transactional_query
-  as projection on ZDMO_R_RAPGENERATORBO
+  as projection on ZDMO_R_RapGeneratorBO
 
 {
   key      RapNodeUUID,
@@ -18,6 +18,8 @@ define root view entity ZDMO_C_RAPGENERATORBO
                additionalBinding: [ { localElement: 'ABAPLanguageVersion',   element: 'language_version'}
                ]
            }]
+           @Search.defaultSearchElement: true
+           @Search.fuzzinessThreshold: 0.90
            PackageName,
            TransportRequest,
            SkipActivation,
@@ -30,6 +32,7 @@ define root view entity ZDMO_C_RAPGENERATORBO
            @Consumption.valueHelpDefinition: [{entity: {name: 'ZDMO_I_RAP_GENERATOR_BIND_TYPE', element: 'name' }}]
            BindingType,
            PackageLanguageVersion,
+           @Consumption.valueHelpDefinition: [{ entity : {name: 'ZDMO_I_RAP_GENERATOR_BOOL_VH', element: 'bool_value'  } }]
            DraftEnabled,
            Suffix,
            Prefix,

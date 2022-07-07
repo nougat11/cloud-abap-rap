@@ -11,7 +11,7 @@ ENDCLASS.
 
 
 
-CLASS zdmo_cl_rap_gen_calc_json_adt IMPLEMENTATION.
+CLASS ZDMO_CL_RAP_GEN_CALC_JSON_ADT IMPLEMENTATION.
 
 
   METHOD if_sadl_exit_calc_element_read~get_calculation_info.

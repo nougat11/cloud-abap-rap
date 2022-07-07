@@ -42,6 +42,9 @@ ENDCLASS.
 
 CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
+
+
+
   METHOD mandatory_fields_check.
 
     DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdmo_c_rapgeneratorbonode.
@@ -81,7 +84,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
     "Do check
     LOOP AT entities INTO DATA(entity).
 
-      GET PERMISSIONS ONLY INSTANCE features ENTITY zdmo_c_rapgeneratorbonode
+      GET PERMISSIONS ONLY INSTANCE FEATURES ENTITY zdmo_c_rapgeneratorbonode
 *      GET PERMISSIONS ONLY FEATURES ENTITY zdmo_c_rapgeneratorbonode
                 FROM VALUE #( ( NodeUUID = entity-NodeUUID ) )
                 REQUEST permission_request
@@ -94,11 +97,11 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
       LOOP AT components_permission_request INTO component_permission_request.
 
-        IF ( permission_result-global-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory or
+        IF ( permission_result-global-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory OR
              permission_result-instances[ NodeUUID = entity-NodeUUID ]-%field-(component_permission_request-name) = if_abap_behv=>fc-f-mandatory )
                                 AND entity-(component_permission_request-name) IS INITIAL.
 
-           APPEND VALUE #( %tky = entity-%tky ) TO failed-rapgeneratorbonode.
+          APPEND VALUE #( %tky = entity-%tky ) TO failed-rapgeneratorbonode.
 
           "since %element-(component_permission_request-name) = if_abap_behv=>mk-on could not be added using a VALUE statement
           "add the value via assigning value to the field of a structure
@@ -179,7 +182,22 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
       LOOP AT rapbo_nodes INTO rapbo_node .
 
+* DATA update_rapbonode TYPE TABLE FOR UPDATE ZDMO_R_RapGeneratorBONode.
 
+*    update_rapbonode = VALUE #( ( %is_draft = if_abap_behv=>mk-on
+*                                nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                       ) ).
+*
+*
+*    MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*             ENTITY rapgeneratorbonode
+*          UPDATE FIELDS ( nodeuuid parentuuid rootuuid )
+*          WITH  update_rapbonode
+*
+*   FAILED   failed
+*   REPORTED reported.
 
 *        IF max_nodenumber = 0.
 *          is_root_node = abap_true.
@@ -189,12 +207,14 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
         IF is_root_node = abap_true.
 
           APPEND VALUE #( %tky      = rapbo_node-%tky
-                    rootuuid = rapbo_node-rootuuid
-                    parentuuid = rapbo_node-parentuuid
+                    rootuuid = rapbo_node-nodeuuid
+                    parentuuid = rapbo_node-nodeuuid
                     nodenumber   = max_nodenumber
                     ) TO update.
         ELSE.
           APPEND VALUE #( %tky      = rapbo_node-%tky
+                    rootuuid = rapbo_node-rootuuid
+                    parentuuid = rapbo_node-parentuuid
                     nodenumber   = max_nodenumber
                     ) TO update.
         ENDIF.
@@ -211,6 +231,8 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
     ENTITY rapgeneratorbonode
       UPDATE FIELDS (
                     "  isRootNode
+                    parentuuid
+                    rootuuid
                       nodenumber
                      " HierarchyDistanceFromRoot
                       ) WITH update
@@ -222,7 +244,7 @@ CLASS lhc_rapgeneratorbonode IMPLEMENTATION.
 
   METHOD get_instance_features.
 
-   "read all child instances
+    "read all child instances
     READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
       ENTITY rapgeneratorbonode
         FIELDS (  entityname isrootnode viewtypevalue hierarchydistancefromroot )

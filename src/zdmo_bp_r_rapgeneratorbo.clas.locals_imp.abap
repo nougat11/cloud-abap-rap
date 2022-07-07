@@ -1,4 +1,5 @@
 CLASS lhc_rapgeneratorbo DEFINITION INHERITING FROM cl_abap_behavior_handler.
+
   PRIVATE SECTION.
     METHODS:
       get_instance_features FOR INSTANCE FEATURES
@@ -22,7 +23,13 @@ CLASS lhc_rapgeneratorbo DEFINITION INHERITING FROM cl_abap_behavior_handler.
       mandatory_fields_check FOR VALIDATE ON SAVE
         IMPORTING keys FOR rapgeneratorbo~mandatory_fields_check,
       createjsonstring FOR DETERMINE ON SAVE
-        IMPORTING keys FOR rapgeneratorbo~createjsonstring.
+        IMPORTING keys FOR rapgeneratorbo~createjsonstring,
+      copyproject FOR MODIFY
+        IMPORTING keys FOR ACTION rapgeneratorbo~copyproject RESULT result
+*        RESULT result
+       .
+
+
 
 ENDCLASS.
 
@@ -84,6 +91,7 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
           CLEAR reported_rapgeneratorbo_line.
           reported_rapgeneratorbo_line-%tky = rap_generator_project-%tky.
           reported_rapgeneratorbo_line-%element-(component_permission_request-name) = if_abap_behv=>mk-on.
+*          reported_rapgeneratorbo_line-%state_area         = 'MISSING_MAND_FIELD'.
           reported_rapgeneratorbo_line-%msg = new_message( id       = 'ZDMO_CM_RAP_GEN_MSG'
                                                            number   = 071
                                                            severity = if_abap_behv_message=>severity-error
@@ -295,6 +303,9 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
                                                            rapbo-jobname IS INITIAL
                                                       THEN if_abap_behv=>fc-o-enabled
                                                       ELSE if_abap_behv=>fc-o-disabled )
+                      %action-copyProject      = COND #( WHEN rapbo-%is_draft = if_abap_behv=>mk-off
+                                                         THEN if_abap_behv=>fc-o-enabled
+                                                         ELSE if_abap_behv=>fc-o-disabled )
                       %field-MultiInlineEdit  = COND #( WHEN rapbo-ImplementationType = zdmo_cl_rap_node=>implementation_type-managed_semantic
                                                          AND rapbo-DataSourceType = zdmo_cl_rap_node=>data_source_types-table
                                                          AND rapbo-DraftEnabled = abap_true
@@ -377,50 +388,106 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
     CONSTANTS mycid_rapbonode TYPE abp_behv_cid VALUE 'My%CID_rapbonode' ##NO_TEXT.
 
-    DATA(xco_on_prem_library) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+    DATA update_rapbo TYPE TABLE FOR UPDATE ZDMO_R_RapGeneratorBO.
+    DATA update_rapbonode TYPE TABLE FOR UPDATE ZDMO_R_RapGeneratorBONode.
+    DATA create_rapbonode_cba TYPE TABLE FOR CREATE ZDMO_R_RapGeneratorBO\_RAPGeneratorBONode.
+    DATA create_rapbo TYPE TABLE FOR CREATE ZDMO_R_RapGeneratorBO.
 
+
+
+    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
+    DATA(xco_on_prem_library) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+*    DATA(xco_cloud_library) = NEW zdmo_cl_rap_xco_cloud_lib(  ).
+    DATA(node) = NEW ZDMO_cl_rap_node(  ).
     IF xco_on_prem_library->on_premise_branch_is_used(  ) = abap_true.
+      xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+      node->set_xco_lib( xco_lib ).
       DATA(abap_language_version) = zdmo_cl_rap_node=>abap_language_version-standard.
     ELSE.
+      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
+      node->set_xco_lib( xco_lib ).
       abap_language_version = zdmo_cl_rap_node=>abap_language_version-abap_for_cloud_development.
     ENDIF.
 
     LOOP AT keys INTO DATA(ls_key).
+      "get transport request
+      node->set_package( ls_key-%param-package_name ).
+      node->set_transport_request(  ).
+
+
+      create_rapbo = VALUE #( ( %is_draft = if_abap_behv=>mk-on
+                                %cid      = ls_key-%cid
+                                rootentityname   = ls_key-%param-entity_name
+                                packagename = ls_key-%param-package_name
+                                abaplanguageversion = abap_language_version "ls_key-%param-language_version
+*                                draftenabled = abap_true
+*                                implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
+*                                datasourcetype = zdmo_cl_rap_node=>data_source_types-table
+*                                bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
+                                TransportRequest = node->transport_request
+                                           ) ).
+
+
+      create_rapbonode_cba = VALUE #( ( %is_draft = if_abap_behv=>mk-on
+                                        %cid_ref  = ls_key-%cid
+                                        %target   = VALUE #( (
+                                                               %is_draft = if_abap_behv=>mk-on
+                                                               %cid      = mycid_rapbonode
+                                                               entityname = ls_key-%param-entity_name
+                                                               isrootnode = abap_true
+                                                               hierarchydistancefromroot = 0
+                                                               ) ) ) ) .
 
       MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-        ENTITY rapgeneratorbo
-          CREATE
-            SET FIELDS WITH VALUE #( ( %is_draft        = if_abap_behv=>mk-on
-                                       %cid             = ls_key-%cid
-                                       %data-rootentityname   = ls_key-%param-entity_name
-                                       %data-packagename = ls_key-%param-package_name
-                                       %data-abaplanguageversion = abap_language_version "ls_key-%param-language_version
-                                       %data-draftenabled = abap_true
-                                       %data-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
-                                       %data-datasourcetype = zdmo_cl_rap_node=>data_source_types-table
-                                       %data-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
-
-                                        ) )
-        ENTITY rapgeneratorbo
-          CREATE BY \_rapgeneratorbonode
-            SET FIELDS WITH VALUE #( ( %is_draft = if_abap_behv=>mk-on
-                                       %cid_ref  = ls_key-%cid
-                                       %target   = VALUE #( (
-                                                              %is_draft = if_abap_behv=>mk-on
-                                                              %cid      = mycid_rapbonode
-                                                              entityname = ls_key-%param-entity_name
-*                                                              parententityname = ls_key-%param-entity_name
-                                                              isrootnode = abap_true
-                                                              hierarchydistancefromroot = 0
+              ENTITY rapgeneratorbo
+      CREATE FIELDS ( rootentityname packagename abaplanguageversion
+*                      draftenabled implementationtype datasourcetype bindingtype
+                      TransportRequest )
+                    WITH create_rapbo
+                    CREATE BY \_RAPGeneratorBONode
+                    FIELDS ( entityname isrootnode hierarchydistancefromroot )
+                    WITH create_rapbonode_cba
+              MAPPED   mapped
+              FAILED   failed
+              REPORTED reported.
 
 
-                                                               ) )
 
 
-                                        ) )
-        MAPPED   mapped
-        FAILED   failed
-        REPORTED reported.
+*      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*        ENTITY rapgeneratorbo
+*          CREATE
+*            SET FIELDS WITH VALUE #( ( %is_draft        = if_abap_behv=>mk-on
+*                                       %cid             = ls_key-%cid
+*                                       %data-rootentityname   = ls_key-%param-entity_name
+*                                       %data-packagename = ls_key-%param-package_name
+*                                       %data-abaplanguageversion = abap_language_version "ls_key-%param-language_version
+*                                       %data-draftenabled = abap_true
+*                                       %data-implementationtype = zdmo_cl_rap_node=>implementation_type-managed_uuid
+*                                       %data-datasourcetype = zdmo_cl_rap_node=>data_source_types-table
+*                                       %data-bindingtype = zdmo_cl_rap_node=>binding_type_name-odata_v4_ui
+*                                       %data-TransportRequest = node->transport_request
+*                                        ) )
+*        ENTITY rapgeneratorbo
+*          CREATE BY \_rapgeneratorbonode
+*            SET FIELDS WITH VALUE #( ( %is_draft = if_abap_behv=>mk-on
+*                                       %cid_ref  = ls_key-%cid
+*                                       %target   = VALUE #( (
+*                                                              %is_draft = if_abap_behv=>mk-on
+*                                                              %cid      = mycid_rapbonode
+*                                                              entityname = ls_key-%param-entity_name
+**                                                              parententityname = ls_key-%param-entity_name
+*                                                              isrootnode = abap_true
+*                                                              hierarchydistancefromroot = 0
+*
+*
+*                                                               ) )
+*
+*
+*                                        ) )
+*        MAPPED   mapped
+*        FAILED   failed
+*        REPORTED reported.
 
       CHECK mapped-rapgeneratorbo[] IS NOT INITIAL.
 
@@ -428,20 +495,40 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
                       %param = VALUE #( %is_draft = mapped-rapgeneratorbo[ 1 ]-%is_draft
                                         %key      = mapped-rapgeneratorbo[ 1 ]-%key ) ) TO result.
 
-      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
-               ENTITY rapgeneratorbonode
-                 UPDATE FROM VALUE #( (     %is_draft = if_abap_behv=>mk-on
-                                            nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
-                                            parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
-                                            rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
-                     ) )
-                EXECUTE setrepoobjectnames
-                  FROM VALUE #( (   %is_draft      =  if_abap_behv=>mk-on
-                                    %key-nodeuuid  =  mapped-rapgeneratorbonode[ 1 ]-nodeuuid ) )
+
+*      DATA(my_node) = NEW ZDMO_cl_rap_node(  ).
+*      my_node->set_xco_lib( my_xco_lib ).
 
 
-     FAILED   failed
-     REPORTED reported.
+*      update_rapbonode = VALUE #( ( %is_draft = if_abap_behv=>mk-on
+*                                    nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                    parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                    rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                           ) ).
+*
+*
+*      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*               ENTITY rapgeneratorbonode
+*            UPDATE FIELDS ( nodeuuid parentuuid rootuuid )
+*            WITH  update_rapbonode
+*
+*     FAILED   failed
+*     REPORTED reported.
+
+*      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*               ENTITY rapgeneratorbonode
+*                 UPDATE FROM VALUE #( (     %is_draft = if_abap_behv=>mk-on
+*                                            nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                            parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                            rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                     ) )
+*                EXECUTE setrepoobjectnames
+*                  FROM VALUE #( (   %is_draft      =  if_abap_behv=>mk-on
+*                                    %key-nodeuuid  =  mapped-rapgeneratorbonode[ 1 ]-nodeuuid ) )
+*
+*
+*     FAILED   failed
+*     REPORTED reported.
 
 
 
@@ -596,6 +683,376 @@ CLASS lhc_rapgeneratorbo IMPLEMENTATION.
 
 
   ENDMETHOD.
+
+  METHOD copyProject.
+
+
+    DATA update_bonodes TYPE TABLE FOR CREATE ZDMO_R_RapGeneratorBO\_RAPGeneratorBONode.
+    DATA update_bonode LIKE LINE OF update_bonodes.
+    DATA targets TYPE TABLE FOR CREATE zdmo_r_rapgeneratorbo\\rapgeneratorbonode .
+    DATA target LIKE LINE OF targets.
+ DATA update_rapbonode TYPE TABLE FOR UPDATE ZDMO_R_RapGeneratorBONode.
+
+    DATA cid TYPE i.
+
+    READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+     ENTITY rapgeneratorbo
+     ALL FIELDS
+     WITH CORRESPONDING #( keys )
+     RESULT DATA(rapbos).
+
+    CHECK lines( rapbos ) = 1.
+    "only copy projects that are not in draft mode
+    CHECK rapbos[ 1 ]-%is_draft = if_abap_behv=>mk-off.
+
+    LOOP AT rapbos INTO DATA(rapbo).
+
+      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+              ENTITY rapgeneratorbo BY \_rapgeneratorbonode
+              ALL  FIELDS
+              WITH VALUE #( ( %tky = rapbo-%tky ) )
+              RESULT DATA(rapbo_nodes).
+
+      CHECK line_exists( rapbo_nodes[ IsRootNode = abap_true ] ).
+
+      SORT rapbo_nodes BY HierarchyDistanceFromRoot ASCENDING.
+
+      DATA(root_node) = rapbo_nodes[ IsRootNode = abap_true ].
+
+
+      "create BO and root node via action
+      MODIFY ENTITIES OF ZDMO_r_rapgeneratorbo IN LOCAL MODE
+        ENTITY rapgeneratorbo
+          EXECUTE createBOandRootNode
+            FROM VALUE #( (
+            %cid = 'ROOT1'
+            %param-entity_name = root_node-EntityName
+            %param-package_name = rapbos[ 1 ]-PackageName
+            ) )
+               " check result
+        MAPPED   mapped
+        FAILED   failed
+        REPORTED reported.
+
+
+
+*      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*             ENTITY rapgeneratorbo
+*               CREATE
+*                 SET FIELDS WITH VALUE #( ( %is_draft        = if_abap_behv=>mk-on
+*                                            %cid             = 'ROOT1'
+*                                            %data-rootentityname   = root_node-EntityName
+*                                            %data-packagename = rapbos[ 1 ]-PackageName
+*                                            %data-abaplanguageversion = rapbos[ 1 ]-ABAPLanguageVersion "ls_key-%param-language_version
+*                                            %data-draftenabled = rapbos[ 1 ]-DraftEnabled
+*                                            %data-implementationtype = rapbos[ 1 ]-ImplementationType
+*                                            %data-datasourcetype = rapbos[ 1 ]-DataSourceType
+*                                            %data-bindingtype = rapbos[ 1 ]-BindingType
+*
+*                                             ) )
+*             ENTITY rapgeneratorbo
+*               CREATE BY \_rapgeneratorbonode
+*                 SET FIELDS WITH VALUE #( ( %is_draft = if_abap_behv=>mk-on
+*                                            %cid_ref  = 'ROOT1'
+*                                            %target   = VALUE #( (
+*                                                                   %is_draft = if_abap_behv=>mk-on
+*                                                                   %cid      = 'CHILD1'
+*                                                                   entityname = root_node-EntityName
+*                                                                   isrootnode = abap_true
+*                                                                   hierarchydistancefromroot = 0
+*
+*
+*                                                                    ) )
+*
+*
+*                                             ) )
+*             MAPPED   mapped
+*             FAILED   failed
+*             REPORTED reported.
+
+      CHECK mapped-rapgeneratorbo[] IS NOT INITIAL.
+
+*      APPEND VALUE #( %cid = ls_key-%cid
+*                      %param = VALUE #( %is_draft = mapped-rapgeneratorbo[ 1 ]-%is_draft
+*                                        %key      = mapped-rapgeneratorbo[ 1 ]-%key ) ) TO result.
+
+
+  update_rapbonode = VALUE #( ( %is_draft = if_abap_behv=>mk-on
+                                    nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+                                    parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+                                    rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+                           ) ).
+
+
+      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+               ENTITY rapgeneratorbonode
+            UPDATE FIELDS ( nodeuuid parentuuid rootuuid )
+            WITH  update_rapbonode
+                            EXECUTE setrepoobjectnames
+                  FROM VALUE #( (   %is_draft      =  if_abap_behv=>mk-on
+                                    %key-nodeuuid  =  mapped-rapgeneratorbonode[ 1 ]-nodeuuid ) )
+
+     FAILED   failed
+     REPORTED reported.
+
+*      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+*               ENTITY rapgeneratorbonode
+*                 UPDATE FROM VALUE #( (     %is_draft = if_abap_behv=>mk-on
+*                                            nodeuuid  = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                            parentuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                                            rootuuid = mapped-rapgeneratorbonode[ 1 ]-nodeuuid
+*                     ) )
+*                EXECUTE setrepoobjectnames
+*                  FROM VALUE #( (   %is_draft      =  if_abap_behv=>mk-on
+*                                    %key-nodeuuid  =  mapped-rapgeneratorbonode[ 1 ]-nodeuuid ) )
+*
+*
+*     FAILED   failed
+*     REPORTED reported.
+*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      "get copied root node
+      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+                    ENTITY rapgeneratorbo BY \_rapgeneratorbonode
+                    ALL  FIELDS
+                    WITH VALUE #( ( %is_draft   = if_abap_behv=>mk-on
+                                    RapNodeUUID = mapped-rapgeneratorbo[ 1 ]-RapNodeUUID  ) )
+                    RESULT DATA(copied_root_nodes).
+
+      CHECK lines( copied_root_nodes ) = 1.
+
+      DATA(copied_root_node) = copied_root_nodes[ 1 ].
+
+      "set fields for copied header and root node
+
+      " we must first set only the datasource for the entity RAPGeneratorBONode since this triggers a determination for the field names
+      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+      ENTITY rapgeneratorbo
+      UPDATE FIELDS ( DraftEnabled ImplementationType DataSourceType BindingType AddToManageBusinessConfig
+                      CustomizingTable MultiInlineEdit Namespace Suffix Prefix SkipActivation )
+      WITH VALUE #( ( %is_draft = if_abap_behv=>mk-on
+                      RapNodeUUID = mapped-rapgeneratorbo[ 1 ]-RapNodeUUID
+                      draftenabled = rapbo-DraftEnabled
+                      implementationtype = rapbo-ImplementationType
+                      datasourcetype = rapbo-DataSourceType
+                      bindingtype = rapbo-BindingType
+                      AddToManageBusinessConfig = rapbo-AddToManageBusinessConfig
+                      CustomizingTable = rapbo-CustomizingTable
+                      MultiInlineEdit = rapbo-MultiInlineEdit
+                      Namespace = rapbo-Namespace
+                      Suffix = rapbo-Suffix
+                      Prefix = rapbo-Prefix
+                      SkipActivation = rapbo-SkipActivation
+                      ) )
+      ENTITY RAPGeneratorBONode
+      UPDATE FIELDS ( DataSource
+*                      FieldNameCreatedAt FieldNameCreatedby FieldNameEtagMaster FieldNameLastChangedAt FieldNameLastChangedBy
+*                      FieldNameLocLastChangedAt FieldNameObjectID FieldNameParentUUID FieldNameRootUUID FieldNameTotalEtag
+*                      FieldNameUUID
+                      )
+      WITH VALUE #( (
+                      NodeUUID = copied_root_node-NodeUUID
+                      %is_draft = if_abap_behv=>mk-on
+                      DataSource = root_node-DataSource
+                      "check if the following fields have to be set using a seperate EML call
+*                      FieldNameCreatedAt = root_node-FieldNameCreatedAt
+*                      FieldNameCreatedby = root_node-FieldNameCreatedby
+*                      FieldNameEtagMaster = root_node-FieldNameEtagMaster
+*                      FieldNameLastChangedAt = root_node-FieldNameLastChangedAt
+*                      FieldNameLastChangedBy = root_node-FieldNameLastChangedBy
+*                      FieldNameLocLastChangedAt = root_node-FieldNameLocLastChangedAt
+*                      FieldNameObjectID = root_node-FieldNameObjectID
+*                      FieldNameParentUUID = root_node-FieldNameParentUUID
+*                      FieldNameRootUUID = root_node-FieldNameRootUUID
+*                      FieldNameTotalEtag = root_node-FieldNameTotalEtag
+*                      FieldNameUUID = root_node-FieldNameUUID
+                      ) )
+       FAILED   DATA(failed_update_root_bo_node)
+       REPORTED DATA(reported_update_root_bo_node).
+
+      "in a second modify we set the field names according to the data from the source project
+      MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+      ENTITY RAPGeneratorBONode
+      UPDATE FIELDS (
+*                      DataSource
+                      FieldNameCreatedAt FieldNameCreatedby FieldNameEtagMaster FieldNameLastChangedAt FieldNameLastChangedBy
+                      FieldNameLocLastChangedAt FieldNameObjectID FieldNameParentUUID FieldNameRootUUID FieldNameTotalEtag
+                      FieldNameUUID
+                      )
+      WITH VALUE #( (
+                      NodeUUID = copied_root_node-NodeUUID
+                      %is_draft = if_abap_behv=>mk-on
+*                      DataSource = root_node-DataSource
+                      "check if the following fields have to be set using a seperate EML call
+                      FieldNameCreatedAt = root_node-FieldNameCreatedAt
+                      FieldNameCreatedby = root_node-FieldNameCreatedby
+                      FieldNameEtagMaster = root_node-FieldNameEtagMaster
+                      FieldNameLastChangedAt = root_node-FieldNameLastChangedAt
+                      FieldNameLastChangedBy = root_node-FieldNameLastChangedBy
+                      FieldNameLocLastChangedAt = root_node-FieldNameLocLastChangedAt
+                      FieldNameObjectID = root_node-FieldNameObjectID
+                      FieldNameParentUUID = root_node-FieldNameParentUUID
+                      FieldNameRootUUID = root_node-FieldNameRootUUID
+                      FieldNameTotalEtag = root_node-FieldNameTotalEtag
+                      FieldNameUUID = root_node-FieldNameUUID
+                      ) )
+       FAILED   DATA(failed_update_root_bo_node2)
+       REPORTED DATA(reported_update_root_bo_node2).
+
+
+
+      "read copied project header data
+      READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+      ENTITY rapgeneratorbo
+      ALL FIELDS
+      WITH VALUE #( ( %is_draft        = if_abap_behv=>mk-on
+                      RapNodeUUID = mapped-rapgeneratorbo[ 1 ]-RapNodeUUID  ) )
+      RESULT DATA(copied_rapbos).
+
+      CHECK lines( copied_rapbos ) = 1.
+
+      LOOP AT rapbo_nodes INTO DATA(rapbo_node) WHERE IsRootNode = abap_false.
+        cid += 1.
+
+        "get copied rapbo nodes
+        READ ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+                      ENTITY rapgeneratorbo BY \_rapgeneratorbonode
+                      ALL  FIELDS
+                      WITH VALUE #( ( %is_draft   = if_abap_behv=>mk-on
+                                      RapNodeUUID = mapped-rapgeneratorbo[ 1 ]-RapNodeUUID  ) )
+                      RESULT DATA(copied_rapbo_nodes).
+
+        "get uuid of parent node
+        DATA(uuid_of_parent_node) = copied_rapbo_nodes[ EntityName = rapbo_node-ParentEntityName ]-NodeUUID.
+
+        MODIFY ENTITIES OF ZDMO_r_rapgeneratorbo IN LOCAL MODE
+        ENTITY rapgeneratorbonode
+          EXECUTE addChild2
+            FROM VALUE #( (
+                                %tky = VALUE #(  %is_draft = if_abap_behv=>mk-on
+                                                  NodeUUID = uuid_of_parent_node )
+                                %param-entity_name = rapbo_node-EntityName
+            ) )
+
+        MAPPED   DATA(mapped_add_child)
+        FAILED   DATA(failed_add_child)
+        REPORTED DATA(reported_add_child).
+
+
+        "set fields for new node
+
+        " we must first set only the datasource for the entity RAPGeneratorBONode since this triggers a determination for the field names
+        MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+        ENTITY RAPGeneratorBONode
+        UPDATE FIELDS (
+                        DataSource
+*                        FieldNameCreatedAt FieldNameCreatedby FieldNameEtagMaster FieldNameLastChangedAt FieldNameLastChangedBy
+*                        FieldNameLocLastChangedAt FieldNameObjectID FieldNameParentUUID FieldNameRootUUID FieldNameTotalEtag
+*                        FieldNameUUID
+                        )
+        WITH VALUE #( (
+
+                                   NodeUUID = mapped_add_child-rapgeneratorbonode[ 1 ]-NodeUUID
+                                   %is_draft = if_abap_behv=>mk-on
+                                   DataSource = rapbo_node-DataSource
+                                   "check if the following fields have to be set using a seperate EML call
+*                                   FieldNameCreatedAt = rapbo_node-FieldNameCreatedAt
+*                                   FieldNameCreatedby = rapbo_node-FieldNameCreatedby
+*                                   FieldNameEtagMaster = rapbo_node-FieldNameEtagMaster
+*                                   FieldNameLastChangedAt = rapbo_node-FieldNameLastChangedAt
+*                                   FieldNameLastChangedBy = rapbo_node-FieldNameLastChangedBy
+*                                   FieldNameLocLastChangedAt = rapbo_node-FieldNameLocLastChangedAt
+*                                   FieldNameObjectID = rapbo_node-FieldNameObjectID
+*                                   FieldNameParentUUID = rapbo_node-FieldNameParentUUID
+*                                   FieldNameRootUUID = rapbo_node-FieldNameRootUUID
+*                                   FieldNameTotalEtag = rapbo_node-FieldNameTotalEtag
+*                                   FieldNameUUID = rapbo_node-FieldNameUUID
+
+                        ) )
+         FAILED   DATA(failed_update_child_bo_node)
+         REPORTED DATA(reported_update_child_bo_node).
+
+        "in a second modify we set the field names according to the data from the source project
+        MODIFY ENTITIES OF zdmo_r_rapgeneratorbo IN LOCAL MODE
+        ENTITY RAPGeneratorBONode
+        UPDATE FIELDS (
+*                        DataSource
+                        FieldNameCreatedAt FieldNameCreatedby FieldNameEtagMaster FieldNameLastChangedAt FieldNameLastChangedBy
+                        FieldNameLocLastChangedAt FieldNameObjectID FieldNameParentUUID FieldNameRootUUID FieldNameTotalEtag
+                        FieldNameUUID
+                        )
+        WITH VALUE #( (
+
+                                   NodeUUID = mapped_add_child-rapgeneratorbonode[ 1 ]-NodeUUID
+                                   %is_draft = if_abap_behv=>mk-on
+*                                   DataSource = rapbo_node-DataSource
+                                   "check if the following fields have to be set using a seperate EML call
+                                   fieldnamecreatedat = rapbo_node-fieldnamecreatedat
+                                   fieldnamecreatedby = rapbo_node-fieldnamecreatedby
+                                   fieldnameetagmaster = rapbo_node-fieldnameetagmaster
+                                   fieldnamelastchangedat = rapbo_node-fieldnamelastchangedat
+                                   fieldnamelastchangedby = rapbo_node-fieldnamelastchangedby
+                                   fieldnameloclastchangedat = rapbo_node-fieldnameloclastchangedat
+                                   fieldnameobjectid = rapbo_node-fieldnameobjectid
+                                   fieldnameparentuuid = rapbo_node-fieldnameparentuuid
+                                   fieldnamerootuuid = rapbo_node-fieldnamerootuuid
+                                   fieldnametotaletag = rapbo_node-fieldnametotaletag
+                                   FieldNameUUID = rapbo_node-FieldNameUUID
+
+                        ) )
+         FAILED   DATA(failed_update_child_bo_node2)
+         REPORTED DATA(reported_update_child_bo_node2).
+
+      ENDLOOP.
+
+      APPEND VALUE #(
+       "von der quelle hier im Schlüssel
+                       rapnodeuuid  = rapbo-RapNodeUUID "  mapped-rapgeneratorbo[ 1 ]-RapNodeUUID
+                       %is_draft = rapbo-%is_draft "  mapped-rapgeneratorbo[ 1 ]-%is_draft
+                       "hier steht was rauskommt
+                       "also mapping der alten auf neue keys
+                       %param = VALUE #( %is_draft = mapped-rapgeneratorbo[ 1 ]-%is_draft
+                                         %key      = mapped-rapgeneratorbo[ 1 ]-%key ) ) TO result.
+
+
+    ENDLOOP.
+
+
+    DATA(a) = mapped.
+
+
+
+
+
+  ENDMETHOD.
+
 
 ENDCLASS.
 

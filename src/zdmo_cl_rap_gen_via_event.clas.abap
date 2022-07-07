@@ -1,4 +1,4 @@
-CLASS zdmo_cl_rap_gen_in_background DEFINITION
+CLASS zdmo_cl_rap_gen_via_event DEFINITION
   PUBLIC
 
   FINAL
@@ -7,9 +7,14 @@ CLASS zdmo_cl_rap_gen_in_background DEFINITION
   PUBLIC SECTION.
     CONSTANTS : selection_name        TYPE c LENGTH 8   VALUE 'I_VIEW',
                 selection_description TYPE c LENGTH 255 VALUE 'RAP business object name'.
-    INTERFACES if_apj_dt_exec_object .
-    INTERFACES if_apj_rt_exec_object .
+
     INTERFACES if_oo_adt_classrun.
+
+*    CLASS-METHODS:
+    METHODS generate_bo_on_event FOR EVENT generation_event OF zdmo_cl_rap_gen_raise_event
+      IMPORTING
+        rap_generator_bo_name.
+
   PROTECTED SECTION.
     METHODS create_transport RETURNING VALUE(lo_transport) TYPE sxco_transport.
   PRIVATE SECTION.
@@ -24,57 +29,59 @@ ENDCLASS.
 
 
 
-CLASS ZDMO_CL_RAP_GEN_IN_BACKGROUND IMPLEMENTATION.
+CLASS ZDMO_CL_RAP_GEN_VIA_EVENT IMPLEMENTATION.
 
 
-  METHOD if_apj_dt_exec_object~get_parameters.
-    " Return the supported selection parameters here
-    et_parameter_def = VALUE #(
-      ( selname = zdmo_cl_rap_node=>job_selection_name kind = if_apj_dt_exec_object=>parameter datatype = 'C' length =  40 param_text = zdmo_cl_rap_node=>job_selection_description changeable_ind = abap_true )
-    ).
+  METHOD create_transport.
 
-    " Return the default parameters values here
-    et_parameter_val = VALUE #(
-      ( selname = zdmo_cl_rap_node=>job_selection_name  kind = if_apj_dt_exec_object=>parameter     sign = 'I' option = 'EQ' low = 'ZI_###' )
-    ).
+    "transport creation checks whether being on cloud or on prem
 
-  ENDMETHOD.
+    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
+
+    DATA(xco_on_prem_library) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+
+    IF xco_on_prem_library->on_premise_branch_is_used(  ) = abap_true.
+      xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
+    ELSE.
+      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
+    ENDIF.
 
 
-  METHOD if_oo_adt_classrun~main.
+*    DATA(ls_package) = xco_cp_abap_repository=>package->for( co_rap_generator_package )->read( ).
 
-    "test run of application job
-    "since application job cannot be debugged we test it via F
+    DATA(ls_package) = xco_lib->get_package( package_name )->read(  ).
 
-    DATA  et_parameters TYPE if_apj_rt_exec_object=>tt_templ_val  .
+    "  DATA(ls_package) = xco_cp_abap_repository=>package->for( co_rap_generator_package )->read( ).
+    DATA(lv_transport_layer) = ls_package-property-transport_layer->value.
+    DATA(lv_transport_target) = ls_package-property-transport_layer->get_transport_target( )->value.
+    DATA(lo_transport_request) = xco_cp_cts=>transports->workbench( lv_transport_target )->create_request( |RAP Generator Application Job Catalog Entry and Job Template| ).
 
-    et_parameters = VALUE #(
-        ( selname = zdmo_cl_rap_node=>job_selection_name
-          kind = if_apj_dt_exec_object=>parameter
-          sign = 'I'
-          option = 'EQ'
-          low = 'Z_###_enter_r(i)_view_name' )
-      ).
 
-    TRY.
-        if_apj_rt_exec_object~execute( it_parameters = et_parameters ).
-        out->write( |Finished| ).
-        "CATCH cx_apj_rt_content INTO DATA(job_scheduling_exception).
-      CATCH cx_root INTO DATA(job_scheduling_exception).
-        out->write( |Exception has occured: { job_scheduling_exception->get_text(  ) }| ).
-    ENDTRY.
+
+* IF lo_transport_request->get_status( ) = xco_cp_transport=>filter->status( xco_cp_transport=>status->modifiable ).
+* DATA(lo_transport_modifiable) = abap_true.
+* ENDIF.
+
+
+
+    lo_transport = lo_transport_request->value.
 
   ENDMETHOD.
 
 
-  METHOD if_apj_rt_exec_object~execute.
+  METHOD generate_bo_on_event.
 
     DATA json_string TYPE string.
     DATA messages TYPE string_table.
     DATA(on_prem_xco_lib) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
 
-
-
+    DATA zdmo_test_line TYPE zdmo_test.
+    zdmo_test_line-test = 'hugo6'.
+    update zdmo_test FROM @zdmo_test_line.
+    WAIT up to 10 seconds.
+    commit work.
+*    assert 1 = 2.
+return.
     TRY.
         IF on_prem_xco_lib->on_premise_branch_is_used(  ).
           DATA(application_log) = cl_bali_log=>create_with_header(
@@ -98,25 +105,19 @@ CLASS ZDMO_CL_RAP_GEN_IN_BACKGROUND IMPLEMENTATION.
 
     ENDTRY.
 
-    " Getting the actual parameter values
-    LOOP AT it_parameters INTO DATA(ls_parameter).
-      CASE ls_parameter-selname.
-        WHEN zdmo_cl_rap_node=>job_selection_name .
 
-          SELECT SINGLE * FROM zdmo_r_rapgeneratorbo  WHERE boname = @ls_parameter-low
-          INTO @DATA(rap_generator_bo).
 
-          IF sy-subrc = 0.
-            json_string = rap_generator_bo-jsonstring.
-          ELSE.
-            RAISE EXCEPTION TYPE zdmo_cx_rap_generator
-              EXPORTING
-                textid   = zdmo_cx_rap_generator=>root_cause_exception
-                mv_value = |BO name { ls_parameter-low } not found in ZDMO_r_rapgeneratorbo |.
-          ENDIF.
+    SELECT SINGLE * FROM zdmo_r_rapgeneratorbo  WHERE boname = @rap_generator_bo_name
+    INTO @DATA(rap_generator_bo).
 
-      ENDCASE.
-    ENDLOOP.
+    IF sy-subrc = 0.
+      json_string = rap_generator_bo-jsonstring.
+    ELSE.
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
+        EXPORTING
+          textid   = zdmo_cx_rap_generator=>root_cause_exception
+          mv_value = |BO name { rap_generator_bo_name } not found in ZDMO_r_rapgeneratorbo |.
+    ENDIF.
 
     DATA(xco_on_prem_library) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
 
@@ -192,39 +193,13 @@ CLASS ZDMO_CL_RAP_GEN_IN_BACKGROUND IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD create_transport.
+  METHOD if_oo_adt_classrun~main.
 
-    "transport creation checks whether being on cloud or on prem
+    "test raise event
+    DATA(href) = NEW zdmo_cl_rap_gen_via_event(  ).
+*  SET HANDLER href->meth FOR ALL INSTANCES.
 
-    DATA xco_lib TYPE REF TO zdmo_cl_rap_xco_lib.
-
-    DATA(xco_on_prem_library) = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
-
-    IF xco_on_prem_library->on_premise_branch_is_used(  ) = abap_true.
-      xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ).
-    ELSE.
-      xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ).
-    ENDIF.
-
-
-*    DATA(ls_package) = xco_cp_abap_repository=>package->for( co_rap_generator_package )->read( ).
-
-    DATA(ls_package) = xco_lib->get_package( package_name )->read(  ).
-
-    "  DATA(ls_package) = xco_cp_abap_repository=>package->for( co_rap_generator_package )->read( ).
-    DATA(lv_transport_layer) = ls_package-property-transport_layer->value.
-    DATA(lv_transport_target) = ls_package-property-transport_layer->get_transport_target( )->value.
-    DATA(lo_transport_request) = xco_cp_cts=>transports->workbench( lv_transport_target )->create_request( |RAP Generator Application Job Catalog Entry and Job Template| ).
-
-
-
-* IF lo_transport_request->get_status( ) = xco_cp_transport=>filter->status( xco_cp_transport=>status->modifiable ).
-* DATA(lo_transport_modifiable) = abap_true.
-* ENDIF.
-
-
-
-    lo_transport = lo_transport_request->value.
-
+    SET HANDLER href->generate_bo_on_event FOR ALL INSTANCES.
+    out->write( sy-subrc ).
   ENDMETHOD.
 ENDCLASS.

@@ -74,7 +74,7 @@ ENDCLASS.
 
 
 
-CLASS zdmo_cl_rap_xco_json_visitor IMPLEMENTATION.
+CLASS ZDMO_CL_RAP_XCO_JSON_VISITOR IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -402,6 +402,8 @@ CLASS zdmo_cl_rap_xco_json_visitor IMPLEMENTATION.
           root_node->set_generate_only_node_hierach( iv_value ).
         WHEN 'createtable'.
           root_node->set_create_table( iv_value ).
+        when 'mimicadtwizard'.
+          root_node->set_mimic_adt_wizard( iv_value ).
         WHEN OTHERS.
 
           error_message = |{ last_visited_member } in entity { root_node->entityname }| ##NO_TEXT.

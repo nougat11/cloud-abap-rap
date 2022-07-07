@@ -29,7 +29,8 @@ ENDCLASS.
 
 
 
-CLASS zdmo_cx_rap_gen_custom_entity IMPLEMENTATION.
+CLASS ZDMO_CX_RAP_GEN_CUSTOM_ENTITY IMPLEMENTATION.
+
 
   METHOD constructor ##ADT_SUPPRESS_GENERATION.
     super->constructor( previous = previous ).
@@ -42,5 +43,4 @@ CLASS zdmo_cx_rap_gen_custom_entity IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
-
 ENDCLASS.

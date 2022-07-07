@@ -15,6 +15,7 @@ use etag
   use action Prepare;
 
   use action createBOandRootNode;
+  use action copyProject;
 
   use action createBO;
   use association _RAPGeneratorBONode { with draft; }
