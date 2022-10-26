@@ -9,7 +9,7 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     TYPES: BEGIN OF t_framework_message_fields,
              severity    TYPE symsgty,
-             object_TYPE TYPE if_xco_gen_o_finding=>tv_object_type,
+             object_type TYPE if_xco_gen_o_finding=>tv_object_type,
              object_name TYPE if_xco_gen_o_finding=>tv_object_name,
              message     TYPE string,
            END OF t_framework_message_fields.
@@ -17,7 +17,7 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
     TYPES: tt_framework_message_fields TYPE STANDARD TABLE OF t_framework_message_fields WITH EMPTY KEY.
 
     TYPES: BEGIN OF t_generated_repository_object,
-             object_TYPE TYPE if_xco_gen_o_finding=>tv_object_type,
+             object_type TYPE if_xco_gen_o_finding=>tv_object_type,
              object_name TYPE if_xco_gen_o_finding=>tv_object_name,
            END OF t_generated_repository_object.
 
@@ -55,8 +55,8 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
              data_element  TYPE sxco_ad_object_name,
              is_key        TYPE abap_bool,
              not_null      TYPE abap_bool,
-             currencyCode  TYPE sxco_cds_field_name,
-             unitOfMeasure TYPE sxco_cds_field_name,
+             currencycode  TYPE sxco_cds_field_name,
+             unitofmeasure TYPE sxco_cds_field_name,
            END OF t_table_fields.
 
     TYPES: tt_table_fields TYPE STANDARD TABLE OF t_table_fields WITH KEY field.
@@ -69,7 +69,7 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     METHODS generate_bo RETURNING VALUE(framework_messages) TYPE tt_framework_message_fields
                         RAISING   cx_xco_gen_put_exception
-                                  ZDMO_cx_rap_generator.
+                                  zdmo_cx_rap_generator.
 
     CLASS-METHODS create_for_cloud_development
       IMPORTING
@@ -85,7 +85,7 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     CLASS-METHODS create_with_rap_node_object
       IMPORTING
-        rap_node      TYPE REF TO ZDMO_cl_rap_node OPTIONAL
+        rap_node      TYPE REF TO zdmo_cl_rap_node OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO zdmo_cl_rap_generator_on_prem.
 
@@ -118,10 +118,10 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     TYPES : aliases TYPE STANDARD TABLE OF sxco_ddef_alias_name.
 
-    DATA root_node    TYPE REF TO ZDMO_cl_rap_node.
+    DATA root_node    TYPE REF TO zdmo_cl_rap_node.
 
 
-    DATA xco_api  TYPE REF TO ZDMO_cl_rap_xco_lib  .
+    DATA xco_api  TYPE REF TO zdmo_cl_rap_xco_lib  .
 
     DATA mo_package      TYPE sxco_package.
 
@@ -157,9 +157,9 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
     METHODS constructor
       IMPORTING
                 json_string  TYPE clike OPTIONAL
-                io_root_node TYPE REF TO ZDMO_cl_rap_node OPTIONAL
-                xco_lib      TYPE REF TO ZDMO_cl_rap_xco_lib OPTIONAL
-      RAISING   ZDMO_cx_rap_generator.
+                io_root_node TYPE REF TO zdmo_cl_rap_node OPTIONAL
+                xco_lib      TYPE REF TO zdmo_cl_rap_xco_lib OPTIONAL
+      RAISING   zdmo_cx_rap_generator.
 
 
     METHODS assign_package.
@@ -172,43 +172,43 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     METHODS create_control_structure
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_r_cds_view
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_p_cds_view
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_i_cds_view
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
 
     METHODS create_mde_view
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_table
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node
         is_draft_table        TYPE abap_bool.
 
     METHODS create_bdef
       IMPORTING
-                VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+                VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS create_bil
       IMPORTING
-                VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+                VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS create_bdef_p
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_condition
       IMPORTING
@@ -218,39 +218,39 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
 
     METHODS create_service_definition
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     "service binding needs a separate put operation
     METHODS create_service_binding
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_custom_entity
       IMPORTING
-        VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node.
+        VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node.
 
     METHODS create_custom_query
       IMPORTING
-                VALUE(io_rap_bo_node) TYPE REF TO ZDMO_cl_rap_node
-      RAISING   ZDMO_cx_rap_generator.
+                VALUE(io_rap_bo_node) TYPE REF TO zdmo_cl_rap_node
+      RAISING   zdmo_cx_rap_generator.
 
     METHODS add_anno_ui_hidden
       IMPORTING
         io_field         TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        ls_header_fields TYPE ZDMO_cl_rap_node=>ts_field.
+        ls_header_fields TYPE zdmo_cl_rap_node=>ts_field.
 
     METHODS add_anno_ui_lineitem
       IMPORTING
         io_field         TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        ls_header_fields TYPE ZDMO_cl_rap_node=>ts_field
+        ls_header_fields TYPE zdmo_cl_rap_node=>ts_field
         position         TYPE i
         label            TYPE string OPTIONAL.
 
     METHODS add_anno_ui_identification
       IMPORTING
         io_field                 TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        io_rap_bo_node           TYPE REF TO ZDMO_cl_rap_node
-        ls_header_fields         TYPE ZDMO_cl_rap_node=>ts_field
+        io_rap_bo_node           TYPE REF TO zdmo_cl_rap_node
+        ls_header_fields         TYPE zdmo_cl_rap_node=>ts_field
         position                 TYPE i
         label                    TYPE string OPTIONAL
         add_action_for_transport TYPE abap_bool OPTIONAL.
@@ -258,19 +258,19 @@ CLASS zdmo_cl_rap_generator_on_prem DEFINITION
     METHODS add_annotation_ui_selectionfld
       IMPORTING
         io_field         TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        io_rap_bo_node   TYPE REF TO ZDMO_cl_rap_node
-        ls_header_fields TYPE ZDMO_cl_rap_node=>ts_field
+        io_rap_bo_node   TYPE REF TO zdmo_cl_rap_node
+        ls_header_fields TYPE zdmo_cl_rap_node=>ts_field
         position         TYPE i.
 
     METHODS add_annotation_ui_header
       IMPORTING
         io_specification TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        io_rap_bo_node   TYPE REF TO ZDMO_cl_rap_node .
+        io_rap_bo_node   TYPE REF TO zdmo_cl_rap_node .
 
     METHODS add_annotation_ui_facets
       IMPORTING
         io_field       TYPE REF TO if_xco_gen_cds_s_fo_ann_target
-        io_rap_bo_node TYPE REF TO ZDMO_cl_rap_node  .
+        io_rap_bo_node TYPE REF TO zdmo_cl_rap_node  .
 
 
 ENDCLASS.
@@ -289,9 +289,9 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
   METHOD constructor.
 
     IF json_string IS INITIAL AND io_root_node IS INITIAL.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid   = ZDMO_cx_rap_generator=>parameter_is_initial
+          textid   = zdmo_cx_rap_generator=>parameter_is_initial
           mv_value = |json_string and io_root_node|.
     ENDIF.
 
@@ -301,17 +301,17 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     IF xco_lib IS NOT INITIAL.
       xco_api = xco_lib.
     ELSE.
-      xco_api = NEW ZDMO_cl_rap_xco_cloud_lib( ).
+      xco_api = NEW zdmo_cl_rap_xco_cloud_lib( ).
     ENDIF.
 
     IF io_root_node IS INITIAL.
 
-      root_node = NEW ZDMO_cl_rap_node(  ).
+      root_node = NEW zdmo_cl_rap_node(  ).
 
       root_node->set_is_root_node( io_is_root_node = abap_true ).
       root_node->set_xco_lib( xco_api ).
 
-      DATA(rap_bo_visitor) = NEW ZDMO_cl_rap_xco_json_visitor( root_node ).
+      DATA(rap_bo_visitor) = NEW zdmo_cl_rap_xco_json_visitor( root_node ).
       DATA(json_data) = xco_cp_json=>data->from_string( json_string ).
       json_data->traverse( rap_bo_visitor ).
 
@@ -323,40 +323,40 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     ENDIF.
 
     CASE root_node->get_implementation_type( ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid .
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
-      WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid .
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid   = ZDMO_cx_rap_generator=>implementation_type_not_valid
+            textid   = zdmo_cx_rap_generator=>implementation_type_not_valid
             mv_value = root_node->get_implementation_type( ).
     ENDCASE.
 
     IF root_node->is_consistent(  ) = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>node_is_not_consistent
+          textid    = zdmo_cx_rap_generator=>node_is_not_consistent
           mv_entity = root_node->entityname.
     ENDIF.
     IF root_node->is_finalized = abap_false.
-      RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+      RAISE EXCEPTION TYPE zdmo_cx_rap_generator
         EXPORTING
-          textid    = ZDMO_cx_rap_generator=>node_is_not_finalized
+          textid    = zdmo_cx_rap_generator=>node_is_not_finalized
           mv_entity = root_node->entityname.
     ENDIF.
     IF root_node->has_childs(  ).
       LOOP AT root_node->all_childnodes INTO DATA(ls_childnode).
         IF ls_childnode->is_consistent(  ) = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>node_is_not_consistent
+              textid    = zdmo_cx_rap_generator=>node_is_not_consistent
               mv_entity = ls_childnode->entityname.
         ENDIF.
         IF ls_childnode->is_finalized = abap_false.
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             EXPORTING
-              textid    = ZDMO_cx_rap_generator=>node_is_not_finalized
+              textid    = zdmo_cx_rap_generator=>node_is_not_finalized
               mv_entity = ls_childnode->entityname.
         ENDIF.
       ENDLOOP.
@@ -378,11 +378,11 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 *    mo_srvb_put_operation = mo_environment->create_put_operation( ).
 **********************************************************************
     "on premise
-    If xco_api->get_package( root_node->package  )->read( )-property-record_object_changes = abap_true.
-       mo_environment = xco_generation=>environment->transported( mo_transport ).
-    Else.
+    IF xco_api->get_package( root_node->package  )->read( )-property-record_object_changes = abap_true.
+      mo_environment = xco_generation=>environment->transported( mo_transport ).
+    ELSE.
       mo_environment = xco_generation=>environment->local.
-    Endif.
+    ENDIF.
     mo_draft_tabl_put_opertion = mo_environment->create_mass_put_operation( ).
     mo_put_operation = mo_environment->create_mass_put_operation( ).
     mo_srvb_put_operation = mo_environment->create_mass_put_operation( ).
@@ -426,11 +426,11 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
     "set implementation type
     CASE io_rap_bo_node->get_implementation_type(  ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
         lo_specification->set_implementation_type( xco_cp_behavior_definition=>implementation_type->managed ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
         lo_specification->set_implementation_type( xco_cp_behavior_definition=>implementation_type->managed ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
         lo_specification->set_implementation_type( xco_cp_behavior_definition=>implementation_type->unmanaged ).
     ENDCASE.
 
@@ -547,11 +547,11 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     ENDIF.
 
     CASE io_rap_bo_node->get_implementation_type(  ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
         lo_header_behavior->characteristics->set_persistent_table( CONV sxco_dbt_object_name( io_rap_bo_node->persistent_table_name ) ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
         lo_header_behavior->characteristics->set_persistent_table( CONV sxco_dbt_object_name( io_rap_bo_node->persistent_table_name ) ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
         "do not set a persistent table
     ENDCASE.
 
@@ -704,7 +704,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
     CASE io_rap_bo_node->get_implementation_type(  ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
 
         lv_determination_name = |Calculate{ io_rap_bo_node->object_id_cds_field_name }|  ##no_text.
 
@@ -726,14 +726,14 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           ENDCASE.
         ENDLOOP.
 
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
 
         "no specific settings needed for managed_semantic until draft would be supported
 
         "xco libraries do not yet support
         "field ( readonly : update ) HolidayID;
 
-      WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+      WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
 
         LOOP AT io_rap_bo_node->lt_fields INTO DATA(ls_field) WHERE name <> io_rap_bo_node->field_name-client.
           IF ls_field-key_indicator = abap_true.
@@ -770,16 +770,16 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
     IF lt_mapping_header IS NOT INITIAL.
       CASE io_rap_bo_node->get_implementation_type(  ).
-        WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+        WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
 
           "use conv #( ) since importing parameter iv_database_table
           "was of type sxco_dbt_object_name and has been changed to clike
           "to support structure names longer than 16 characters as of 2111
 
           lo_header_behavior->add_mapping_for( CONV #( io_rap_bo_node->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_header ).
-        WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+        WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
           lo_header_behavior->add_mapping_for( CONV #( io_rap_bo_node->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_header ).
-        WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+        WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
           "add control structure
 *          lo_header_behavior->add_mapping_for( CONV sxco_dbt_object_name( io_rap_bo_node->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_header )->set_control( io_rap_bo_node->rap_node_objects-control_structure ).
 
@@ -897,11 +897,11 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
           CASE lo_childnode->get_implementation_type(  ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+            WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
               item_characteristics->set_persistent_table( CONV sxco_dbt_object_name( lo_childnode->persistent_table_name ) ).
-            WHEN   ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+            WHEN   zdmo_cl_rap_node=>implementation_type-managed_semantic.
               item_characteristics->set_persistent_table( CONV sxco_dbt_object_name( lo_childnode->persistent_table_name ) ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+            WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
               "nothing to do
           ENDCASE.
 
@@ -961,11 +961,11 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
           CASE lo_childnode->get_implementation_type(  ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+            WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
               item_characteristics->set_persistent_table( CONV sxco_dbt_object_name( lo_childnode->persistent_table_name ) ).
-            WHEN   ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+            WHEN   zdmo_cl_rap_node=>implementation_type-managed_semantic.
               item_characteristics->set_persistent_table( CONV sxco_dbt_object_name( lo_childnode->persistent_table_name  ) ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+            WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
               "set no persistent table
           ENDCASE.
 
@@ -977,7 +977,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
         ELSE.
           "should not happen
 
-          RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+          RAISE EXCEPTION TYPE zdmo_cx_rap_generator
             MESSAGE ID 'ZDMO_CM_RAP_GEN_MSG' TYPE 'E' NUMBER '001'
             WITH lo_childnode->entityname lo_childnode->root_node->entityname.
 
@@ -1047,7 +1047,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
         CASE lo_childnode->get_implementation_type(  ).
-          WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+          WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
             "determination CalculateSemanticKey on modify { create; }
             lv_determination_name = 'Calculate' && lo_childnode->object_id_cds_field_name.
 
@@ -1070,7 +1070,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
               ENDCASE.
             ENDLOOP.
 
-          WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+          WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
 
             "key field is not set as read only since at this point we assume
             "that the key is set externally
@@ -1093,7 +1093,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
               "lo_item_behavior->add_field( ls_fields-cds_view_field )->set_readonly_update(  ).
             ENDLOOP.
 
-          WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+          WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
             "make the key fields read only in the child entities
             "Otherwise you get the warning
             "The field "<semantic key of root node>" is used for "lock" dependency (in the ON clause of
@@ -1134,14 +1134,14 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
         IF lt_mapping_item IS NOT INITIAL.
           CASE io_rap_bo_node->get_implementation_type(  ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+            WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
               "use conv #( ) since importing parameter iv_database_table
               "was of type sxco_dbt_object_name and has been changed to clike
               "to support structure names longer than 16 characters as of 2111
               lo_item_behavior->add_mapping_for( CONV #( lo_childnode->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_item ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+            WHEN zdmo_cl_rap_node=>implementation_type-managed_semantic.
               lo_item_behavior->add_mapping_for( CONV #( lo_childnode->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_item ).
-            WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+            WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
               "add control structure
               IF io_rap_bo_node->data_source_type = io_rap_bo_node->data_source_types-table.
                 lo_item_behavior->add_mapping_for( CONV #( lo_childnode->persistent_table_name ) )->set_field_mapping( it_field_mappings =  lt_mapping_item )->set_control( lo_childnode->rap_node_objects-control_structure ).
@@ -1321,7 +1321,14 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     DATA  source_code_line LIKE LINE OF source_method_save_modified.
 
 
+    DATA method_added_to_lcl_handler VALUE abap_false TYPE abap_bool.
+    DATA method_added_to_lsc_saver VALUE abap_false TYPE abap_bool.
+    DATA local_handler_classname TYPE sxco_ao_object_name.
+    DATA local_saver_classname TYPE sxco_ao_object_name.
 
+    "set names for local classes at the beginning
+    local_handler_classname = |lhc_{ io_rap_bo_node->entityname }|.
+    local_saver_classname = |lcl_saver|.
 
     DATA(lo_specification) = mo_put_operation->for-clas->add_object(  io_rap_bo_node->rap_node_objects-behavior_implementation
                                     )->set_package( mo_package
@@ -1348,10 +1355,17 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     "that are generated as well
     "otherwise we get the error
     "The BEHAVIOR class "LCL_HANDLER" does not contain the BEHAVIOR method "MODIFY | READ".
+    "therefore we check at the end of this method if a method has been added
+    "to either the local handler or local saver class
+    "if not (if the respective flags are still false) the local class will be removed from the specification
 
 
-    DATA(lo_handler) = lo_specification->add_local_class( |lhc_{ io_rap_bo_node->entityname }| ).
+    DATA(lo_handler) = lo_specification->add_local_class( local_handler_classname  ).
     lo_handler->definition->set_superclass( 'CL_ABAP_BEHAVIOR_HANDLER' ).
+
+    DATA(lo_saver) = lo_specification->add_local_class( local_saver_classname ).
+    lo_saver->definition->set_superclass( 'CL_ABAP_BEHAVIOR_SAVER' ).
+
 
 **********************************************************************
 ** Begin of deletion 2108
@@ -1374,6 +1388,8 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
             iv_request = 'requested_authorizations'.
 
         lo_handler->implementation->add_method( method_get_glbl_authorizations ).
+        method_added_to_lcl_handler = abap_true.
+
       ENDIF.
     ENDIF.
 
@@ -1399,6 +1415,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           iv_request = 'requested_features'.
 
       lo_handler->implementation->add_method( method_get_instance_features ).
+      method_added_to_lcl_handler = abap_true.
 
       CLEAR  source_method_get_inst_feat.
       APPEND |READ ENTITIES OF { io_rap_bo_node->rap_root_node_objects-behavior_definition_r } IN LOCAL MODE| TO  source_method_get_inst_feat ##no_text.
@@ -1449,6 +1466,8 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       APPEND    |                          %param = singleton ) ).| TO source_action_set_transport ##no_text.
 
       lo_handler->implementation->add_method( CONV #( lv_action_name ) )->set_source( source_action_set_transport ).
+      method_added_to_lcl_handler = abap_true.
+
     ENDIF.
 
 
@@ -1491,18 +1510,20 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
       lo_handler->implementation->add_method( CONV #( lv_validation_name ) )->set_source( source_method_validation ).
+      method_added_to_lcl_handler = abap_true.
     ENDIF.
 
     "add local saver class to record customizing data
     IF io_rap_bo_node->is_customizing_table = abap_true AND
        io_rap_bo_node->is_root(  ) = abap_true.
 
-      DATA(lo_saver) = lo_specification->add_local_class( 'LCL_SAVER' ).
-      lo_saver->definition->set_superclass( 'CL_ABAP_BEHAVIOR_SAVER' ).
+
+*      DATA(lo_saver) = lo_specification->add_local_class( local_saver_classname ).
+*      lo_saver->definition->set_superclass( 'CL_ABAP_BEHAVIOR_SAVER' ).
 
       lo_saver->definition->section-protected->add_method( cleanup_finalize )->set_redefinition( ).
       lo_saver->implementation->add_method(  cleanup_finalize  ).
-
+      method_added_to_lsc_saver = abap_true.
 
       lo_saver->definition->section-protected->add_method( method_save_modified )->set_redefinition( ).
 
@@ -1530,7 +1551,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       APPEND |ENDIF.| TO source_method_save_modified ##no_text.
 
       lo_saver->implementation->add_method(  method_save_modified  )->set_source( source_method_save_modified ).
-
+      method_added_to_lsc_saver = abap_true.
     ENDIF.
 
 **********************************************************************
@@ -1541,7 +1562,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
     CASE io_rap_bo_node->get_implementation_type(  ).
-      WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+      WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
 
         DATA cba_method_name  TYPE if_xco_gen_clas_s_fo_d_section=>tv_method_name  .
         DATA rba_method_name  TYPE if_xco_gen_clas_s_fo_d_section=>tv_method_name  .
@@ -1550,15 +1571,17 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
         DATA(lv_determination_name) = |Calculate{ io_rap_bo_node->object_id_cds_field_name }|  ##no_text.
 
         DATA(lo_det) = lo_handler->definition->section-private->add_method( CONV #( lv_determination_name ) ).
-        DATA(Behavior_implementation_det) = lo_det->behavior_implementation.
-        CALL METHOD Behavior_implementation_det->('SET_FOR_DETERMINE_ON_SAVE').
+        DATA(behavior_implementation_det) = lo_det->behavior_implementation.
+        CALL METHOD behavior_implementation_det->('SET_FOR_DETERMINE_ON_SAVE').
 
         DATA(lo_keys_determination) = lo_det->add_importing_parameter( iv_name = 'keys' ).
         lo_keys_determination->behavior_implementation->set_for( iv_for = | { io_rap_bo_node->entityname }~{ lv_determination_name } | ).
 
         lo_handler->implementation->add_method( CONV #( lv_determination_name ) ).
+        method_added_to_lcl_handler = abap_true.
 
-      WHEN ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic.
+
+      WHEN zdmo_cl_rap_node=>implementation_type-unmanaged_semantic.
 
         IF io_rap_bo_node->is_root(  ).
           DATA(lo_method) = lo_handler->definition->section-private->add_method( method_create ).
@@ -1566,6 +1589,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           DATA(lo_import_parameter) = lo_method->add_importing_parameter( iv_name = 'entities' ).
           lo_import_parameter->behavior_implementation->set_for_create( iv_entity_name = | { io_rap_bo_node->entityname } | ).
           lo_handler->implementation->add_method( method_create ).
+          method_added_to_lcl_handler = abap_true.
         ENDIF.
 
         lo_method = lo_handler->definition->section-private->add_method( method_update ).
@@ -1573,19 +1597,20 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
         lo_import_parameter = lo_method->add_importing_parameter( iv_name = 'entities' ).
         lo_import_parameter->behavior_implementation->set_for_update( iv_entity_name = | { io_rap_bo_node->entityname } | ).
         lo_handler->implementation->add_method( method_update ).
-
+        method_added_to_lcl_handler = abap_true.
         lo_method = lo_handler->definition->section-private->add_method( method_delete ).
         lo_method->behavior_implementation->set_for_modify(  ).
         lo_import_parameter = lo_method->add_importing_parameter( iv_name = 'keys' ).
         lo_import_parameter->behavior_implementation->set_for_delete( iv_entity_name = | { io_rap_bo_node->entityname } | ).
         lo_handler->implementation->add_method( method_delete ).
-
+        method_added_to_lcl_handler = abap_true.
         IF io_rap_bo_node->is_root(  ).
           lo_method = lo_handler->definition->section-private->add_method( method_lock ).
           lo_method->behavior_implementation->set_for_lock(  ).
           lo_import_parameter = lo_method->add_importing_parameter( iv_name = 'keys' ).
           lo_import_parameter->behavior_implementation->set_for_lock( iv_entity_name = | { io_rap_bo_node->entityname } | ).
           lo_handler->implementation->add_method( method_lock ).
+          method_added_to_lcl_handler = abap_true.
         ENDIF.
 
         lo_method = lo_handler->definition->section-private->add_method( method_read ).
@@ -1593,6 +1618,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
         lo_import_parameter = lo_method->add_importing_parameter( iv_name = 'keys' ).
         lo_import_parameter->behavior_implementation->set_for_read( iv_entity_name = | { io_rap_bo_node->entityname } | ).
         lo_handler->implementation->add_method( method_read ).
+        method_added_to_lcl_handler = abap_true.
 
         IF io_rap_bo_node->is_child(  ) = abap_true OR
            io_rap_bo_node->is_grand_child_or_deeper(  ) = abap_true.
@@ -1603,7 +1629,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           lo_import_parameter = lo_method->add_importing_parameter( iv_name = |keys_{ method_rba } | ).
           lo_import_parameter->behavior_implementation->set_for_read( iv_entity_name = | { io_rap_bo_node->entityname }\\_{ io_rap_bo_node->parent_node->entityname } | ).
           lo_handler->implementation->add_method( rba_method_name ).
-
+          method_added_to_lcl_handler = abap_true.
         ENDIF.
 
         LOOP AT io_rap_bo_node->childnodes INTO childnode.
@@ -1620,12 +1646,12 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           lo_import_parameter = lo_method->add_importing_parameter( iv_name = |keys_{ method_rba } | ).
           lo_import_parameter->behavior_implementation->set_for_read( iv_entity_name = | { io_rap_bo_node->entityname }\\_{ childnode->entityname } | ).
           lo_handler->implementation->add_method( rba_method_name ).
-
+          method_added_to_lcl_handler = abap_true.
         ENDLOOP.
 
         IF io_rap_bo_node->is_root(  ).
-          lo_saver = lo_specification->add_local_class( |LCL_{ io_rap_bo_node->rap_root_node_objects-behavior_definition_r }| ).
-          lo_saver->definition->set_superclass( 'CL_ABAP_BEHAVIOR_SAVER' ).
+*          lo_saver = lo_specification->add_local_class( |LCL_{ io_rap_bo_node->rap_root_node_objects-behavior_definition_r }| ).
+*          lo_saver->definition->set_superclass( 'CL_ABAP_BEHAVIOR_SAVER' ).
 
           lo_saver->definition->section-protected->add_method( method_finalize )->set_redefinition( ).
           lo_saver->implementation->add_method(  method_finalize  ).
@@ -1641,8 +1667,19 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
           lo_saver->definition->section-protected->add_method( method_cleanup_finalize )->set_redefinition( ).
           lo_saver->implementation->add_method(  method_cleanup_finalize  ).
+          method_added_to_lsc_saver = abap_true.
         ENDIF.
     ENDCASE.
+
+    "remove local saver class from specification if no method has been added
+    IF method_added_to_lsc_saver = abap_false.
+      lo_specification->remove_local_class( local_saver_classname ).
+    ENDIF.
+
+    "remove local handler class from specification if no method has been added
+    IF method_added_to_lcl_handler = abap_false.
+      lo_specification->remove_local_class( local_handler_classname ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -1763,7 +1800,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     LOOP AT       io_rap_bo_node->lt_additional_fields INTO DATA(additional_fields) WHERE cds_interface_view = abap_true.
       lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( CONV #( additional_fields-cds_view_field ) )  ).
       IF additional_fields-localized = abap_true.
-        lo_Field->set_localized( abap_true ).
+        lo_field->set_localized( abap_true ).
       ENDIF.
     ENDLOOP.
 
@@ -1772,7 +1809,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
   METHOD create_p_cds_view.
 
-    DATA fuzzinessThreshold TYPE p LENGTH 3 DECIMALS 2.
+    DATA fuzzinessthreshold TYPE p LENGTH 3 DECIMALS 2.
     fuzzinessthreshold = 9 / 10.
 
     DATA(lo_specification) = mo_put_operation->for-ddls->add_object( io_rap_bo_node->rap_node_objects-cds_view_p
@@ -1831,7 +1868,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           IF io_rap_bo_node->get_implementation_type( ) = io_rap_bo_node->implementation_type-managed_semantic OR
              io_rap_bo_node->get_implementation_type( ) = io_rap_bo_node->implementation_type-unmanaged_semantic.
             lo_field->add_annotation( 'Search.defaultSearchElement' )->value->build( )->add_boolean( abap_true ).
-            lo_field->add_annotation( 'Search.fuzzinessThreshold' )->value->build( )->add_number( iv_value = fuzzinessThreshold ).
+            lo_field->add_annotation( 'Search.fuzzinessThreshold' )->value->build( )->add_number( iv_value = fuzzinessthreshold ).
           ENDIF.
         ENDIF.
 
@@ -1839,7 +1876,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           WHEN io_rap_bo_node->object_id.
             IF ls_header_fields-key_indicator = abap_false.
               lo_field->add_annotation( 'Search.defaultSearchElement' )->value->build( )->add_boolean( abap_true ).
-              lo_field->add_annotation( 'Search.fuzzinessThreshold' )->value->build( )->add_number( iv_value = fuzzinessThreshold ).
+              lo_field->add_annotation( 'Search.fuzzinessThreshold' )->value->build( )->add_number( iv_value = fuzzinessthreshold ).
             ENDIF.
         ENDCASE.
 
@@ -1952,7 +1989,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( CONV #( additional_fields-cds_view_field ) )  ).
 
       IF additional_fields-localized = abap_true.
-        lo_Field->set_localized( abap_true ).
+        lo_field->set_localized( abap_true ).
       ENDIF.
     ENDLOOP.
 
@@ -1992,9 +2029,9 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       WHEN io_rap_bo_node->binding_type_name-odata_v2_web_api..
         lo_specification_header->set_binding_type( xco_cp_service_binding=>binding_type->odata_v2_web_api ).
       WHEN OTHERS.
-        RAISE EXCEPTION TYPE ZDMO_cx_rap_generator
+        RAISE EXCEPTION TYPE zdmo_cx_rap_generator
           EXPORTING
-            textid     = ZDMO_cx_rap_generator=>invalid_binding_type
+            textid     = zdmo_cx_rap_generator=>invalid_binding_type
             mv_value   = io_rap_bo_node->root_node->binding_type
             mv_value_2 = io_rap_bo_node->supported_binding_types.
     ENDCASE.
@@ -2013,8 +2050,8 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
     TYPES: BEGIN OF ty_cds_views_used_by_assoc,
-             name   TYPE ZDMO_cl_rap_node=>ts_assocation-name,    "    sxco_ddef_alias_name,
-             target TYPE ZDMO_cl_rap_node=>ts_assocation-target,
+             name   TYPE zdmo_cl_rap_node=>ts_assocation-name,    "    sxco_ddef_alias_name,
+             target TYPE zdmo_cl_rap_node=>ts_assocation-target,
            END OF ty_cds_views_used_by_assoc.
     DATA  lt_cds_views_used_by_assoc  TYPE STANDARD TABLE OF ty_cds_views_used_by_assoc.
     DATA  ls_cds_views_used_by_assoc  TYPE ty_cds_views_used_by_assoc.
@@ -2130,7 +2167,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       IF table_field_line-is_data_element = abap_true.
         database_table_field->set_type( xco_cp_abap_dictionary=>data_element( table_field_line-data_element ) ).
       ENDIF.
-      IF table_field_line-is_built_in_type = abAP_TRUE.
+      IF table_field_line-is_built_in_type = abap_true.
 
         database_table_field->set_type( xco_cp_abap_dictionary=>built_in_type->for(
                                         iv_type     =  table_field_line-built_in_type
@@ -2322,7 +2359,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
       CASE io_rap_bo_node->get_implementation_type(  ) .
 
-        WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
+        WHEN  zdmo_cl_rap_node=>implementation_type-unmanaged_semantic .
 
           CLEAR ls_condition_components.
           CLEAR lt_condition_components.
@@ -2347,12 +2384,12 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
         CASE io_rap_bo_node->get_implementation_type(  ) .
 
-          WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic .
+          WHEN  zdmo_cl_rap_node=>implementation_type-unmanaged_semantic .
 
             CLEAR ls_condition_components.
             CLEAR lt_condition_components.
 
-            LOOP AT io_rap_bo_node->ROOT_node->semantic_key INTO DATA(ls_root_semantic_key).
+            LOOP AT io_rap_bo_node->root_node->semantic_key INTO DATA(ls_root_semantic_key).
               ls_condition_components-association_name = '_' && io_rap_bo_node->root_node->rap_node_objects-alias.
               ls_condition_components-association_field = ls_root_semantic_key-cds_view_field.
               ls_condition_components-projection_field = ls_root_semantic_key-cds_view_field.
@@ -2411,7 +2448,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       IF ls_header_fields-is_data_element = abap_true.
         lo_field->set_type( xco_cp_abap_dictionary=>data_element( ls_header_fields-data_element ) ).
       ENDIF.
-      IF ls_header_fields-is_built_in_type = abAP_TRUE.
+      IF ls_header_fields-is_built_in_type = abap_true.
         lo_field->set_type( xco_cp_abap_dictionary=>built_in_type->for(
                                         iv_type     =  ls_header_fields-built_in_type
                                         iv_length   = ls_header_fields-built_in_type_length
@@ -2520,15 +2557,15 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
         )->set_condition( lo_condition ).
 
       CASE ls_assocation-cardinality .
-        WHEN ZDMO_cl_rap_node=>cardinality-one.
+        WHEN zdmo_cl_rap_node=>cardinality-one.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_n.
+        WHEN zdmo_cl_rap_node=>cardinality-one_to_n.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->one_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_n.
+        WHEN zdmo_cl_rap_node=>cardinality-zero_to_n.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_one.
+        WHEN zdmo_cl_rap_node=>cardinality-zero_to_one.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_one.
+        WHEN zdmo_cl_rap_node=>cardinality-one_to_one.
           "@todo: currently association[1] will be generated
           "fix available with 2008 HFC2
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->range( iv_min = 1 iv_max = 1 ) ).
@@ -2539,7 +2576,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     LOOP AT       io_rap_bo_node->lt_additional_fields INTO DATA(additional_fields) WHERE cds_restricted_reuse_view = abap_true.
       lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( additional_fields-name )  ).
       IF additional_fields-cds_view_field IS NOT INITIAL.
-        lo_Field->set_alias( additional_fields-cds_view_field ).
+        lo_field->set_alias( additional_fields-cds_view_field ).
       ENDIF.
     ENDLOOP.
 **********************************************************************
@@ -2668,14 +2705,14 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
     "add selection fields for semantic key fields or for the fields that are marked as object id
 
-    DATA add_annotation_UI_selectionFld TYPE abap_bool VALUE abap_false .
+    DATA add_annotation_ui_selectionfld TYPE abap_bool VALUE abap_false .
 
     IF io_rap_bo_node->is_root(  ) = abap_true AND
        ( io_rap_bo_node->get_implementation_type( ) = io_rap_bo_node->implementation_type-unmanaged_semantic OR
           io_rap_bo_node->get_implementation_type( ) = io_rap_bo_node->implementation_type-managed_semantic ) AND
           ls_header_fields-key_indicator = abap_true.
 
-      add_annotation_UI_selectionFld = abap_true.
+      add_annotation_ui_selectionfld = abap_true.
 
     ENDIF.
 
@@ -2683,18 +2720,18 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
        io_rap_bo_node->get_implementation_type( ) = io_rap_bo_node->implementation_type-managed_uuid  AND
        ls_header_fields-name = io_rap_bo_node->object_id.
 
-      add_annotation_UI_selectionFld = abap_true.
+      add_annotation_ui_selectionfld = abap_true.
 
     ENDIF.
 
     IF io_rap_bo_node->is_root(  ) = abap_true AND
        ls_header_fields-has_valuehelp = abap_true.
 
-      add_annotation_UI_selectionFld = abap_true.
+      add_annotation_ui_selectionfld = abap_true.
 
     ENDIF.
 
-    IF add_annotation_UI_selectionFld = abap_true.
+    IF add_annotation_ui_selectionfld = abap_true.
       io_field->add_annotation( 'UI.selectionField' )->value->build(
       )->begin_array(
       )->begin_record(
@@ -2877,13 +2914,13 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
   METHOD create_for_cloud_development.
     result = NEW #( json_string = json_string
-                    xco_lib = NEW ZDMO_cl_rap_xco_cloud_lib(  ) ).
+                    xco_lib = NEW zdmo_cl_rap_xco_cloud_lib(  ) ).
   ENDMETHOD.
 
 
   METHOD create_for_on_prem_development.
     result = NEW #( json_string = json_string
-                    xco_lib = NEW ZDMO_cl_rap_xco_on_prem_lib(  ) ).
+                    xco_lib = NEW zdmo_cl_rap_xco_on_prem_lib(  ) ).
   ENDMETHOD.
 
 
@@ -2948,7 +2985,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
     ELSE.
 
       CASE io_rap_bo_node->get_implementation_type(  ) .
-        WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+        WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
 
           DATA(parent_uuid_cds_field_name) = io_rap_bo_node->lt_fields[ name = io_rap_bo_node->field_name-parent_uuid ]-cds_view_field.
           DATA(uuid_cds_field_name_in_parent) = io_rap_bo_node->parent_node->lt_fields[ name = io_rap_bo_node->parent_node->field_name-uuid ]-cds_view_field.
@@ -2959,7 +2996,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
 
-        WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic OR ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+        WHEN  zdmo_cl_rap_node=>implementation_type-unmanaged_semantic OR zdmo_cl_rap_node=>implementation_type-managed_semantic.
 
           CLEAR ls_condition_components.
           CLEAR lt_condition_components.
@@ -2987,7 +3024,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
       IF io_rap_bo_node->is_grand_child_or_deeper(  ).
 
         CASE io_rap_bo_node->get_implementation_type(  ) .
-          WHEN ZDMO_cl_rap_node=>implementation_type-managed_uuid.
+          WHEN zdmo_cl_rap_node=>implementation_type-managed_uuid.
 
             DATA(root_uuid_cds_field_name) = io_rap_bo_node->lt_fields[ name = io_rap_bo_node->field_name-root_uuid ]-cds_view_field.
             DATA(uuid_cds_field_name_in_root) = io_rap_bo_node->root_node->lt_fields[ name = io_rap_bo_node->root_node->field_name-uuid ]-cds_view_field.
@@ -2997,12 +3034,12 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
 
 
-          WHEN  ZDMO_cl_rap_node=>implementation_type-unmanaged_semantic OR ZDMO_cl_rap_node=>implementation_type-managed_semantic.
+          WHEN  zdmo_cl_rap_node=>implementation_type-unmanaged_semantic OR zdmo_cl_rap_node=>implementation_type-managed_semantic.
 
             CLEAR ls_condition_components.
             CLEAR lt_condition_components.
 
-            LOOP AT io_rap_bo_node->ROOT_node->semantic_key INTO DATA(ls_root_semantic_key).
+            LOOP AT io_rap_bo_node->root_node->semantic_key INTO DATA(ls_root_semantic_key).
               ls_condition_components-association_name = '_' && io_rap_bo_node->root_node->rap_node_objects-alias.
               ls_condition_components-association_field = ls_root_semantic_key-cds_view_field.
               ls_condition_components-projection_field = ls_root_semantic_key-cds_view_field.
@@ -3161,15 +3198,15 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
           )->set_condition( lo_condition ).
 
       CASE ls_assocation-cardinality .
-        WHEN ZDMO_cl_rap_node=>cardinality-one.
+        WHEN zdmo_cl_rap_node=>cardinality-one.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_n.
+        WHEN zdmo_cl_rap_node=>cardinality-one_to_n.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->one_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_n.
+        WHEN zdmo_cl_rap_node=>cardinality-zero_to_n.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_n ).
-        WHEN ZDMO_cl_rap_node=>cardinality-zero_to_one.
+        WHEN zdmo_cl_rap_node=>cardinality-zero_to_one.
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->zero_to_one ).
-        WHEN ZDMO_cl_rap_node=>cardinality-one_to_one.
+        WHEN zdmo_cl_rap_node=>cardinality-one_to_one.
           "@todo: currently association[1] will be generated
           "fix available with 2008 HFC2
           lo_association->set_cardinality(  xco_cp_cds=>cardinality->range( iv_min = 1 iv_max = 1 ) ).
@@ -3184,7 +3221,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
       lo_field = lo_view->add_field( xco_cp_ddl=>expression->for( additional_fields-name )  ).
       IF additional_fields-cds_view_field IS NOT INITIAL.
-        lo_Field->set_alias( additional_fields-cds_view_field ).
+        lo_field->set_alias( additional_fields-cds_view_field ).
       ENDIF.
     ENDLOOP.
 
@@ -3297,7 +3334,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 **********************************************************************
 ** Begin of insertion 2020
 **********************************************************************
-        lo_result = mo_draft_tabl_put_opertion->execute(  ).
+            lo_result = mo_draft_tabl_put_opertion->execute(  ).
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
@@ -3399,7 +3436,7 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
-      lo_result = mo_put_operation->execute(  ).
+          lo_result = mo_put_operation->execute(  ).
 **********************************************************************
 ** End of insertion 2020
 **********************************************************************
