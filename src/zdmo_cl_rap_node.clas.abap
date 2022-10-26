@@ -4874,13 +4874,13 @@ CLASS zdmo_cl_rap_node IMPLEMENTATION.
     "field_name-last_changed_at =  |max ({ singleton_child_tab_name }.last_changed_at)|  .
     field_name-total_etag =  |max ({ singleton_child_tab_name }.{ childnodes[ 1 ]->field_name-total_etag } )|  .
     lt_fields = VALUE #(
-      (
-       name = 'CLIENT'
-       cds_view_field = 'Client'
-       key_indicator = 'X'
-       is_data_element = 'X'
-       data_element = 'MANDT'
-       )
+*      (
+*       name = 'CLIENT'
+*       cds_view_field = 'Client'
+*       key_indicator = 'X'
+*       is_data_element = 'X'
+*       data_element = 'MANDT'
+*       )
       (
        name = '1'
        cds_view_field = singleton_field_name
