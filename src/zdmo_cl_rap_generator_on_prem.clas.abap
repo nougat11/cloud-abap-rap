@@ -2153,6 +2153,16 @@ CLASS zdmo_cl_rap_generator_on_prem IMPLEMENTATION.
 
     DATA database_table_field  TYPE REF TO if_xco_gen_tabl_dbt_s_fo_field  .
 
+    "the draft table of the singleton must be client dependent
+    "and the key field must be the first field of the table
+
+    if is_draft_table = abap_true and io_rap_bo_node->is_virtual_root(  ) = abap_true.
+       database_table_field = lo_specification->add_field( 'MANDT' ).
+       database_table_field->set_type( xco_cp_abap_dictionary=>built_in_type->clnt ).
+       database_table_field->set_not_null( ).
+       database_table_field->set_key_indicator(  ).
+    endif.
+
     LOOP AT io_rap_bo_node->lt_fields INTO DATA(table_field_line).
 
       DATA(cds_field_name_upper) = to_upper( table_field_line-cds_view_field ).
