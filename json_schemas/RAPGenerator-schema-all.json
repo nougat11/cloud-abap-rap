@@ -46,17 +46,17 @@
         },
         "multiInlineEdit": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "If set to true the generator will add a technical root entity with just one instance. This singleton instance then allows to leverage the multi inline edit capabilies of the SAP Fiori Elements object page. \nWhen set to true requires the following settings:\n\"bindingType\" : \"odata_v4_ui\"\n\"draftenabled\" : true"
         },
         "isCustomizingTable": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "Business configuration content can be recorded in customizing transport requests.\nWhen set to true requires the following settings:\n\"bindingType\" : \"odata_v4_ui\"\n\"draftenabled\" : true\n\"addBusinessConfigurationRegistration\" : true"
         },
         "addBusinessConfigurationRegistration": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "If set to true your business object will be listed in the Maintain Business Configurations App. Please note that the Maintain Business Configurations API only supports one level of sub nodes, i.e. your root entity can have associations to an arbitrary amount of entities but these sub entities cannot have associations to further sub entities. The data model must consist only of client-dependent tables.\n When set to true requires the following settings:\n\"bindingType\" : \"odata_v4_ui\"\n\"draftenabled\" : true"
         },
         "generateOnlyNodeHierachy": {
